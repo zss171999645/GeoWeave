@@ -1,0 +1,53 @@
+run:
+  name: official_core4_eval_local
+  gpu_ids: auto
+  device: auto
+  save_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline
+  output_root: tmp/official_core4_eval_local
+  dry_run: false
+
+model:
+  kind: official
+  checkpoint: ""
+  config: ""
+  official_ckpt_root: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B
+  re10k_base_config: vggt/vggt_official_eval_paper
+
+datasets:
+  re10k:
+    enabled: true
+    impl: lightweight
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800_clusterfix/test
+    limit_scenes: 0
+    load_img_size: 518
+    paper10_per_scene: 10
+    paper10_seed: 20260215
+    val_n_srcs: 9
+    cam_metric_profile: vggt_eval
+  co3dv2:
+    enabled: true
+    image_root: ""
+    setlist_root: ""
+    anno_dir: ""
+    output: ""
+    load_img_size: 518
+    selection_source: co3d_setlists
+    subset: seen41
+    split: test
+    num_frames: 10
+    seed: 0
+  dtu:
+    enabled: true
+    dataset_root: ""
+    output_dir: ""
+    point_source: native
+    load_img_size: 518
+    max_sequences: 0
+  eth3d:
+    enabled: true
+    dataset_root: ""
+    seq_map: ""
+    output_dir: ""
+    point_source: native
+    load_img_size: 518
+    max_sequences: 0

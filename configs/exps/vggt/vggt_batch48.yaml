@@ -1,0 +1,28 @@
+# Configuration for VGGT (batch 48 version)
+# NOTE that batch 48 is ~7% slower than batch 24
+# so it's not recommended to use batch 48 !!
+# 
+# profiling results:
+# a800 b24 12.58days
+# a800 b48 13.32days
+
+configs:
+    - configs/exps/vggt/vggt.yaml
+
+runner_cfg:
+    gradient_accumulation_steps: 1
+    ep_iter: 1000 # 2x the default for using gradient accumulation
+    log_interval: 20 # log every 20 iterations for using gradient accumulation
+    empty_cache_ep: 1 # eval_ep
+    epochs: 160
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: True # use the custom VGGT batching
+        use_checkpoint: True
+        use_chunkwise_checkpoint: True
+        dpt_head_use_checkpoint: True
+
+dataloader_cfg:
+    dataset_cfg:
+        n_frames_batch: 48

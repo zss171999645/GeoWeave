@@ -1,0 +1,13 @@
+# Configuration for VGGT
+configs:
+    - configs/exps/vggt/vggt.yaml
+
+model_cfg:
+  sampler_cfg:
+    dinov2_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitl14_reg4_pretrain.pth"
+    agg_regator_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/aggregator.pt"
+    cam_decoder_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/camera.pt"
+    xyz_decoder_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/point.pt"
+    dpt_decoder_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/depth.pt"
+    tra_decoder_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/track.pt"
+    load_pretrained: True

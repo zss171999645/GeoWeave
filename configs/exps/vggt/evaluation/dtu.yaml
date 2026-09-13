@@ -1,0 +1,63 @@
+# Fix the random seed and set deterministic behavior
+fix_random: True
+deterministic: True
+
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: True # use the custom VGGT batching
+
+val_dataloader_cfg:
+    num_workers: 0 # make fix_random and deterministic work
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        runtime_build: False
+        dataset_indexing: False
+        parallel_loading: True
+        dataloading_workers: 64
+        disk_dataset: True
+        fix_random: True
+        meta_roots:
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset/dtu_evc_eval1
+        metaset_cfgs:
+            - dataset_name: "dtu"
+              ims_pattern: "{frame:06d}.jpg"
+              mks_pattern: "{frame:06d}.jpg"
+              dps_pattern: "{frame:06d}.pfm"
+              masks_dir: masks
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.98
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              n_rays: -1
+              max_size: 1036 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              dist_opt_K: False
+              use_masks: True # DTU point metrics use object masks
+              use_depths: True # use ground truth depths
+              use_vhulls: False
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              source_type: DISTANCEROT
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              scale_type: DIST
+              n_srcs_list: [9]
+              n_srcs_prob: [1.0]
+    sampler_cfg:
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1] # evaluate all scenes
+    batch_sampler_cfg:
+        n_srcs_list: [9]
+        n_srcs_prob: [1.0]
+
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

@@ -1,0 +1,6 @@
+# Install a matching torch / torchvision pair first (see README).
+numpy>=1.24,<2
+pillow>=9
+safetensors>=0.4
+huggingface_hub>=0.24
+einops>=0.7

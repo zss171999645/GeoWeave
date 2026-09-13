@@ -1,0 +1,75 @@
+{
+  "depth_head_cfg": {
+    "chunk_cfg": {
+      "batch_chunk_size": 1,
+      "enabled": true,
+      "frames_chunk_size": 4
+    },
+    "type": "DPTHeadWithChunkwiseBP"
+  },
+  "embed_dim": 1024,
+  "enable_camera": true,
+  "enable_depth": true,
+  "enable_point": true,
+  "enable_track": false,
+  "img_size": 518,
+  "indexer_cfg": {
+    "detach_input": true,
+    "enable_sparse": true,
+    "enabled": true,
+    "eps": 1e-06,
+    "force_keep_register_tokens": false,
+    "force_keep_self_view_tokens": false,
+    "force_keep_special_in_topk_budget": false,
+    "force_keep_special_tokens": false,
+    "head_chunk_size": 1,
+    "head_dim": 64,
+    "head_lr_scale": 0.2,
+    "indexer_layers": "9-19",
+    "inference_sparse": true,
+    "layerwise_backward": false,
+    "layerwise_backward_warmup_only": true,
+    "loss_weight": 0.2,
+    "n_heads": 4,
+    "save_warmup_ckpt": true,
+    "score_dtype": "float16",
+    "sparse_loss_weight": 0.2,
+    "sparse_lr": 1e-05,
+    "sparse_start_step": 0,
+    "sparse_use_mask": false,
+    "topk": 1024,
+    "use_dense_flash_attn_warmup_kernel": false,
+    "use_sparse_flash_attn": true,
+    "use_topk_kernel": true,
+    "warmup_ckpt_tag": "warmup_end",
+    "warmup_loss_weight": 1.0,
+    "warmup_lr": 0.001,
+    "warmup_no_grad_attn": true,
+    "warmup_only_indexer_loss": true,
+    "warmup_steps": 0
+  },
+  "memory_cfg": {
+    "fused_attn": true,
+    "output_list_cfg": {
+      "keep_last": true,
+      "keep_layers": [
+        4,
+        11,
+        17,
+        23
+      ]
+    },
+    "patch_embed_chunk_size": 8,
+    "use_checkpoint": true,
+    "use_xformers": true
+  },
+  "patch_size": 14,
+  "point_head_cfg": {
+    "chunk_cfg": {
+      "batch_chunk_size": 1,
+      "enabled": true,
+      "frames_chunk_size": 4
+    },
+    "type": "DPTHeadWithChunkwiseBP"
+  }
+}

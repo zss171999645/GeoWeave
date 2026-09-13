@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VGGT 论文首图原型（pt34，双主图清爽版）</title>
+  <style>
+    :root {
+      --bg: #efe8db;
+      --panel: #fbf8f2;
+      --ink: #1c1813;
+      --muted: #6e665d;
+      --grid: #ddd1bf;
+      --ours: #d55f2e;
+      --ours-soft: #f4c9b3;
+      --official: #2f6787;
+      --official-soft: #cae0eb;
+      --other: #a69887;
+      --paper: #6f58c9;
+      --paper-soft: #ddd4f6;
+      --good: #2d8a58;
+      --shadow: 0 18px 42px rgba(39, 30, 18, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Avenir Next", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(213, 95, 46, 0.10), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(47, 103, 135, 0.12), transparent 30%),
+        var(--bg);
+    }
+    .page {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 28px 28px 56px;
+    }
+    .intro {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .headline,
+    .summary,
+    .figure {
+      background: rgba(251, 248, 242, 0.94);
+      border: 1px solid rgba(28, 24, 19, 0.08);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+    .headline {
+      padding: 26px 28px;
+    }
+    .summary {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+    .figure {
+      padding: 22px;
+    }
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      color: var(--ours);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 42px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+    .headline p,
+    .summary p,
+    .figure p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .summary h2,
+    .figure-title h2 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f2e7d8;
+      border: 1px solid rgba(28, 24, 19, 0.08);
+      color: #5f5548;
+      font-size: 13px;
+    }
+    .figure-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .figure-title .title {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      text-transform: none;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      padding: 15px 15px 14px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #f8f0e6 0%, #fcfaf6 100%);
+      border: 1px solid rgba(28, 24, 19, 0.06);
+    }
+    .metric h3 {
+      margin: 0 0 10px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .metric .big {
+      margin: 0 0 6px;
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 900;
+    }
+    .metric .desc {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .metric .accent { color: var(--ours); }
+    .board {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 16px;
+    }
+    .panel {
+      position: relative;
+      background: var(--panel);
+      border: 1px solid rgba(28, 24, 19, 0.08);
+      border-radius: 24px;
+      padding: 18px;
+      overflow: hidden;
+    }
+    .panel h3 {
+      margin: 0 0 6px;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+    }
+    .badge {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(213, 95, 46, 0.12);
+      color: var(--ours);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .subgrid {
+      display: grid;
+      grid-template-rows: auto auto;
+      gap: 14px;
+    }
+    .inset {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #f6eee2;
+      border: 1px solid rgba(28, 24, 19, 0.06);
+    }
+    .inset h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: var(--ink);
+    }
+    .inset p {
+      font-size: 13px;
+      margin: 0;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .legend .ours::before { background: var(--ours); }
+    .legend .official::before { background: var(--official); }
+    .legend .other::before { background: var(--other); }
+    .legend .paper::before { background: var(--paper); }
+    .footer {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    code {
+      background: rgba(28, 24, 19, 0.05);
+      border-radius: 6px;
+      padding: 2px 6px;
+    }
+    @media (max-width: 1220px) {
+      .intro,
+      .board,
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="intro">
+      <div class="headline">
+        <div class="eyebrow">Hero Figure / pt34 Baseline</div>
+        <h1>把首图收敛成两个主图：<br>左边讲 accuracy × speed，右边讲真实 large-view latency。</h1>
+        <p>
+          左图现在同时放两条方法族：VGGT family 和 π³ family，并保留我们自己的 route_ud / DS×2。
+          信息会更多，但关系会更完整。
+        </p>
+      </div>
+      <div class="summary">
+        <h2>这版只保留真的清楚的信息</h2>
+        <div class="chips">
+          <div class="chip">左图：RE10K × 512-view speed frontier（VGGT family + π³ family）</div>
+          <div class="chip">右图：route_ud 真实 latency 曲线</div>
+          <div class="chip">inset：VKITTI depth 三指标</div>
+          <div class="chip">DS×4 不放：当前没有实测速度</div>
+        </div>
+        <p>
+          我查过仓库记录，没有找到可直接引用的 <code>downsample x4</code> 真实 benchmark，所以这版不再强行放它。
+        </p>
+      </div>
+    </section>
+
+    <section class="figure">
+      <div class="figure-title">
+        <div>
+          <h2 class="title">PT34 Figure Draft: Accuracy First, Efficiency Second</h2>
+          <p>
+            左边直接画 `RE10K × 512-view speed frontier`，把 `VGGT family` 和 `π³ family` 都放进去，右边给出真实的大视角效率曲线，
+            右下角再补一个很小的 `VKITTI depth` 指纹图。
+          </p>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <h3>公平主增益</h3>
+          <div class="big accent">+2.23 pp</div>
+          <div class="desc"><strong>RE10K AUC@30</strong><br>pt34 <span class="accent">87.25</span> vs official <strong>85.02</strong></div>
+        </div>
+        <div class="metric">
+          <h3>主表稳定性</h3>
+          <div class="big">≈ flat</div>
+          <div class="desc"><strong>CO3Dv2 AUC@30</strong><br>pt34 <span class="accent">87.64</span> vs official <strong>87.66</strong></div>
+        </div>
+        <div class="metric">
+          <h3>large-view 拐点</h3>
+          <div class="big">360 views</div>
+          <div class="desc"><strong>route_ud</strong> 首次快过 dense<br><span class="accent">6093.8 ms</span> vs <strong>6205.4 ms</strong></div>
+        </div>
+        <div class="metric">
+          <h3>dense geometry</h3>
+          <div class="big accent">-33.5%</div>
+          <div class="desc"><strong>VKITTI AbsRel</strong><br>pt34 <span class="accent">0.0572</span> vs official <strong>0.0860</strong></div>
+        </div>
+      </div>
+
+      <div class="board">
+        <section class="panel">
+          <div class="badge">Fair Comparison</div>
+          <h3>1. RE10K × speed frontier</h3>
+          <p>
+            横轴是 <code>RE10K AUC@30</code>，纵轴是 <code>large-view acceleration</code>。
+            图里同时放两条方法族，并直接写名字。横向看精度，纵向看大视角加速。
+          </p>
+          <svg id="accuracyScatter" viewBox="0 0 700 480"></svg>
+          <div class="legend">
+            <span class="ours">Our measured variants</span>
+            <span class="official">VGGT family</span>
+            <span class="paper">π³ family</span>
+          </div>
+          <div class="inset">
+            <h4>图内保留的方法</h4>
+            <p>
+              `VGGT / FastVGGT / Speed3R-VGGT`，`π³ / FastVGGT-π³ / Speed3R-π³`，以及 `route_ud / DS×2 proto`。<br>
+              `our official` 去掉，避免和 `route_ud` 重复。`LiteVGGT` 暂不放：当前没找到公开 `RE10K` 数值。
+            </p>
+            <p>
+              外部方法的 `RE10K` 数值来自 `Speed3R Table 2`；`FastVGGT 4×` 和 `Speed3R 12.4×` 来自对应论文公开 speed claim。<br>
+              `route_ud` 的速度取我们刚测的 `512 views` 真值；其 `RE10K=87.25` 继承自 `pt34`，因为它是 route/kernel 优化路径。<br>
+              `DS×2 proto` 取我们当前实测 `RE10K AUC@30 = 87.03`，速度也取 `512 views` 真值。
+            </p>
+          </div>
+        </section>
+
+        <div class="subgrid">
+          <section class="panel">
+            <div class="badge">Measured Efficiency</div>
+            <h3>2. Large-view latency：只看真实 measured curve</h3>
+            <p>
+              这里不再混任何别的方法。只画我们自己已经测过、可重复的真实值：dense vs <code>route_ud</code>。
+              这样右图专门回答“长视角时是否真的开始更快”。
+            </p>
+            <svg id="latencyPlot" viewBox="0 0 660 280"></svg>
+            <div class="legend">
+              <span class="official">Dense / official path</span>
+              <span class="ours">Ours route_ud</span>
+            </div>
+            <div class="footer">
+              当前真实值来自 `aidi/docs/records/vggt_dsa_infer_closeout_20260312.md`。  
+              `500 views` 时，dense `12201.5 ms`，route_ud `11168.4 ms`，约 `1.09×`。
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="badge">Inset</div>
+            <h3>3. VKITTI depth fingerprint：一个小 inset 就够</h3>
+            <p>
+              这块只负责补“几何更强”。当前不需要把 long-seq pose 这个弱项一起塞进来。
+            </p>
+            <svg id="depthInset" viewBox="0 0 660 210"></svg>
+            <div class="inset">
+              <h4>这块现在只负责 depth</h4>
+              <p>
+                `VKITTI depth` 继续单独占一个小角，不把当前不占优的 `long-seq pose` 混进首图。左图已经负责把外部 speed 方法放进去。
+              </p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const palette = {
+      ink: '#1c1813',
+      muted: '#6e665d',
+      grid: '#ddd1bf',
+      ours: '#d55f2e',
+      oursSoft: '#f4c9b3',
+      official: '#2f6787',
+      officialSoft: '#cae0eb',
+      other: '#a69887',
+      paper: '#6f58c9'
+    };
+
+    function makeAccuracyScatter() {
+      const svg = document.getElementById('accuracyScatter');
+      const W = svg.viewBox.baseVal.width;
+      const H = svg.viewBox.baseVal.height;
+      const m = { l: 72, r: 20, t: 20, b: 56 };
+      const xMin = 72.0;
+      const xMax = 88.3;
+      const yMin = 1.0;
+      const yMax = 16.0;
+      const sx = v => m.l + ((v - xMin) / (xMax - xMin)) * (W - m.l - m.r);
+      const log2 = v => Math.log(v) / Math.log(2);
+      const sy = v => {
+        const lo = log2(yMin);
+        const hi = log2(yMax);
+        return H - m.b - ((log2(v) - lo) / (hi - lo)) * (H - m.t - m.b);
+      };
+      const methods = [
+        { name: 'VGGT', x: 74.17, y: 1.0, kind: 'vggt', r: 11, dx: -10, dy: 22, anchor: 'end' },
+        { name: 'FastVGGT', x: 72.97, y: 4.0, kind: 'vggt', r: 10, dx: 10, dy: -10, anchor: 'start' },
+        { name: 'Speed3R-VGGT', x: 74.81, y: 12.4, kind: 'vggt', r: 10, dx: 10, dy: 6, anchor: 'start' },
+        { name: 'π³', x: 87.37, y: 1.0, kind: 'pi3', r: 12, dx: -8, dy: -14, anchor: 'end' },
+        { name: 'FastVGGT-π³', x: 87.26, y: 4.0, kind: 'pi3', r: 10, dx: 10, dy: 6, anchor: 'start' },
+        { name: 'Speed3R-π³', x: 87.17, y: 12.4, kind: 'pi3', r: 10, dx: 10, dy: 6, anchor: 'start' },
+        { name: 'route_ud', x: 87.25, y: 1.12, kind: 'ours', r: 11, dx: 12, dy: 24, anchor: 'start' },
+        { name: 'DS×2 proto', x: 87.03, y: 2.95, kind: 'oursProto', r: 11, dx: 12, dy: -14, anchor: 'start' }
+      ];
+      const color = kind => {
+        if (kind === 'ours' || kind === 'oursProto') return palette.ours;
+        if (kind === 'vggt') return palette.official;
+        if (kind === 'pi3') return palette.paper;
+        return palette.other;
+      };
+      let html = '';
+
+      [73.0, 75.0, 77.0, 81.0, 85.0, 89.0].forEach(x => {
+        html += `<line x1="${sx(x)}" y1="${m.t}" x2="${sx(x)}" y2="${H - m.b}" stroke="${palette.grid}" stroke-width="1"/>`;
+        html += `<text x="${sx(x)}" y="${H - 18}" text-anchor="middle" font-size="11" fill="${palette.muted}">${x.toFixed(1)}</text>`;
+      });
+      [1, 2, 4, 8, 12, 16].forEach(y => {
+        html += `<line x1="${m.l}" y1="${sy(y)}" x2="${W - m.r}" y2="${sy(y)}" stroke="${palette.grid}" stroke-width="1"/>`;
+        html += `<text x="${m.l - 10}" y="${sy(y) + 4}" text-anchor="end" font-size="11" fill="${palette.muted}">${y}×</text>`;
+      });
+
+      methods.forEach((method) => {
+        const cx = sx(method.x);
+        const cy = sy(method.y);
+        const c = color(method.kind);
+        const r = method.r;
+        if (method.kind === 'pi3') {
+          html += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(111,88,201,0.08)" stroke="${c}" stroke-width="3"/>`;
+        } else if (method.kind === 'oursProto') {
+          html += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(213,95,46,0.10)" stroke="${c}" stroke-width="3" stroke-dasharray="6 4"/>`;
+        } else {
+          html += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" fill-opacity="0.88" stroke="${c}" stroke-width="2"/>`;
+        }
+        html += `<text x="${cx + method.dx}" y="${cy + method.dy}" text-anchor="${method.anchor}" font-size="11" font-weight="900" fill="${c}" stroke="#f7efe4" stroke-width="4" paint-order="stroke">${method.name}</text>`;
+      });
+
+      html += `<text x="${W / 2}" y="${H - 2}" text-anchor="middle" font-size="12" fill="${palette.muted}">RE10K AUC@30 (higher is better)</text>`;
+      html += `<text transform="translate(18 ${H / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="${palette.muted}">Large-view acceleration / paper-reported speed claim (higher is better)</text>`;
+      svg.innerHTML = html;
+    }
+
+    function makeLatencyPlot() {
+      const svg = document.getElementById('latencyPlot');
+      const W = svg.viewBox.baseVal.width;
+      const H = svg.viewBox.baseVal.height;
+      const m = { l: 66, r: 16, t: 18, b: 42 };
+      const xs = [300, 360, 500];
+      const yMin = 3500;
+      const yMax = 13000;
+      const sx = v => m.l + ((v - xs[0]) / (xs[xs.length - 1] - xs[0])) * (W - m.l - m.r);
+      const sy = v => H - m.b - ((v - yMin) / (yMax - yMin)) * (H - m.t - m.b);
+      const dense = [4313.4, 6205.4, 12201.5];
+      const ours = [4393.6, 6093.8, 11168.4];
+      let html = '';
+
+      [4000, 6000, 8000, 10000, 12000].forEach(y => {
+        html += `<line x1="${m.l}" y1="${sy(y)}" x2="${W - m.r}" y2="${sy(y)}" stroke="${palette.grid}" stroke-width="1"/>`;
+        html += `<text x="${m.l - 10}" y="${sy(y) + 4}" text-anchor="end" font-size="11" fill="${palette.muted}">${Math.round(y / 1000)}k</text>`;
+      });
+      xs.forEach(x => {
+        html += `<line x1="${sx(x)}" y1="${m.t}" x2="${sx(x)}" y2="${H - m.b}" stroke="${palette.grid}" stroke-width="1"/>`;
+        html += `<text x="${sx(x)}" y="${H - 16}" text-anchor="middle" font-size="11" fill="${palette.muted}">${x}</text>`;
+      });
+
+      const drawLine = (vals, color, label, labelDy) => {
+        const d = vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${sx(xs[i])} ${sy(v)}`).join(' ');
+        html += `<path d="${d}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+        vals.forEach((v, i) => {
+          html += `<circle cx="${sx(xs[i])}" cy="${sy(v)}" r="5.2" fill="${color}"/>`;
+          html += `<text x="${sx(xs[i])}" y="${sy(v) - 10}" text-anchor="middle" font-size="11" font-weight="700" fill="${color}">${Math.round(v)}</text>`;
+        });
+        html += `<text x="${sx(xs[xs.length - 1]) - 10}" y="${sy(vals[vals.length - 1]) + labelDy}" text-anchor="end" font-size="12" font-weight="800" fill="${color}">${label}</text>`;
+      };
+
+      drawLine(dense, palette.official, 'dense', -12);
+      drawLine(ours, palette.ours, 'route_ud', 18);
+
+      html += `<text x="${sx(360) + 10}" y="${sy(6093.8) - 18}" font-size="12" fill="${palette.ours}" font-weight="800">crossover @360</text>`;
+      html += `<text x="${W / 2}" y="${H - 2}" text-anchor="middle" font-size="12" fill="${palette.muted}">Input views</text>`;
+      html += `<text transform="translate(18 ${H / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="${palette.muted}">Latency (ms, lower is better)</text>`;
+      svg.innerHTML = html;
+    }
+
+    function makeDepthInset() {
+      const svg = document.getElementById('depthInset');
+      const W = svg.viewBox.baseVal.width;
+      const metrics = [
+        { title: 'AbsRel ↓', official: 0.0860, ours: 0.0572, max: 0.10, delta: '-33.5%' },
+        { title: 'D1 ↑', official: 90.84, ours: 96.21, max: 100, delta: '+5.37 pp' },
+        { title: 'RMSE ↓', official: 0.3371, ours: 0.1471, max: 0.36, delta: '-56.4%' }
+      ];
+      let html = '';
+
+      metrics.forEach((metric, idx) => {
+        const x = 18 + idx * 208;
+        const y = 26;
+        const barW = 112;
+        const scale = v => (v / metric.max) * barW;
+        html += `<rect x="${x}" y="${y}" width="190" height="136" rx="18" fill="#f7efe4" stroke="rgba(28,24,19,0.06)"/>`;
+        html += `<text x="${x + 14}" y="${y + 22}" font-size="13" font-weight="800" fill="${palette.ink}">${metric.title}</text>`;
+        html += `<text x="${x + 174}" y="${y + 22}" text-anchor="end" font-size="13" font-weight="900" fill="${palette.ours}">${metric.delta}</text>`;
+
+        html += `<text x="${x + 14}" y="${y + 48}" font-size="11" fill="${palette.muted}">official</text>`;
+        html += `<rect x="${x + 14}" y="${y + 56}" width="${barW}" height="12" rx="999" fill="${palette.officialSoft}"/>`;
+        html += `<rect x="${x + 14}" y="${y + 56}" width="${scale(metric.official)}" height="12" rx="999" fill="${palette.official}"/>`;
+        html += `<text x="${x + 136}" y="${y + 67}" font-size="11" font-weight="700" fill="${palette.official}">${metric.official}</text>`;
+
+        html += `<text x="${x + 14}" y="${y + 90}" font-size="11" fill="${palette.muted}">pt34</text>`;
+        html += `<rect x="${x + 14}" y="${y + 98}" width="${barW}" height="12" rx="999" fill="${palette.oursSoft}"/>`;
+        html += `<rect x="${x + 14}" y="${y + 98}" width="${scale(metric.ours)}" height="12" rx="999" fill="${palette.ours}"/>`;
+        html += `<text x="${x + 136}" y="${y + 109}" font-size="11" font-weight="700" fill="${palette.ours}">${metric.ours}</text>`;
+      });
+
+      svg.innerHTML = html;
+    }
+
+    makeAccuracyScatter();
+    makeLatencyPlot();
+    makeDepthInset();
+  </script>
+</body>
+</html>

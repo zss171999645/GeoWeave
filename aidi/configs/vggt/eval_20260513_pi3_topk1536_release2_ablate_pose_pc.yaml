@@ -1,0 +1,69 @@
+run:
+  name: pi3_topk1536_release2_ablate_pose_pc_20260513
+  gpu_ids: auto
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260513_pi3_topk1536_release2_ablate_pose_pc
+  save_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline
+  skip_existing: true
+  continue_on_error: true
+  allow_co3dv2_videodepth: false
+  auto_skip_known_oom_official_videodepth_on_5090: false
+  env:
+    PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/record/pi3/native_sparse/pi3_native_sparse_vggt15_ckpt49_dynres_topk1536_l9_17_lw10_splitclip_static0_topk1536_release2_ablate_20260510_0504/outputs/pi3_native_sparse_vggt15_ckpt49_dynres_topk1536_l9_17_lw10_splitclip_static0_topk1536_release2_ablate_20260510_0504/ckpts/checkpoint_37/pytorch_model.bin
+  pi3_config: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/record/pi3/native_sparse/pi3_native_sparse_vggt15_ckpt49_dynres_topk1536_l9_17_lw10_splitclip_static0_topk1536_release2_ablate_20260510_0504/outputs/pi3_native_sparse_vggt15_ckpt49_dynres_topk1536_l9_17_lw10_splitclip_static0_topk1536_release2_ablate_20260510_0504/.hydra/config.yaml
+  pi3_model_impl: native_sparse
+  pi3_native_root: aidi/third_party/pi3_training
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  re10k:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800_clusterfix/test
+    pose:
+      enabled: true
+      limit_scenes: 0
+
+  co3dv2:
+    image_root: /horizon-bucket/saturn_v_4dlabel/009_geo/002_data/dust3r_datasets/dust3r_extracted/co3dv2
+    setlist_root: /horizon-bucket/saturn_v_4dlabel/009_geo/002_data/dust3r_datasets/dust3r_extracted/co3dv2
+    anno_dir: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/co3d_official_annos_co3d_setlists_seen41_test
+    shared_image_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/co3d_official_image_mirror_co3d_setlists_seen41_test_full
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/co3dv2/test
+    pose:
+      enabled: true
+      num_frames: 10
+
+  eth3d:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/eth3d
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_root
+    seq_map: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_seqmap.json
+    pose:
+      enabled: true
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+
+  dtu64:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/dtu64
+    pose:
+      enabled: true
+      max_frames: 100
+
+  dtu:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/dtu_test_mvsnet_release_full
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+
+  7scenes:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    pointcloud:
+      sparse:
+        enabled: true
+        max_sequences: 0
+      dense:
+        enabled: true
+        max_sequences: 0

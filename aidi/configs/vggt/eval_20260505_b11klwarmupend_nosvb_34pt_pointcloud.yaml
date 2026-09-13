@@ -1,0 +1,41 @@
+run:
+  name: b11klwarmupend_nosvb_34pt_pointcloud_full_20260505
+  gpu_ids: "3,7"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_b11klwarmupend_nosvb_34pt/pointcloud
+  skip_existing: false
+  continue_on_error: true
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/vggt/official/finetune_5090_sparse_20260502_b11klwarmupend_13ds_topk1024_l9_19_nosvb_core4val_v3/34.pt
+  config: aidi/configs/vggt/finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+datasets:
+  dtu:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/dtu_test_mvsnet_release_full
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+  eth3d:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_root
+    seq_map: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_seqmap.json
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+  7scenes:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    pointcloud:
+      sparse:
+        enabled: true
+        max_sequences: 0
+      dense:
+        enabled: true
+        max_sequences: 0
+  nrgbd:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/NRGBD
+    pointcloud:
+      sparse:
+        enabled: true
+        max_sequences: 0
+      dense:
+        enabled: true
+        max_sequences: 0

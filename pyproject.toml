@@ -1,0 +1,128 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "easyvolcap"
+version = "0.0.0"
+description = "EasyVolcap: Accelerating Neural Volumetric Video Research"
+readme = "README.md"
+license = { file = "license" }
+authors = [{ email = "zhenx@zju.edu.cn" }, { name = "Zhen Xu" }]
+requires-python = ">=3.8"
+dynamic = ["dependencies", "optional-dependencies"]
+
+[project.urls]
+homepage = "https://github.com/dendenxu/easyvolcap"
+
+[tool.setuptools]
+# Automatic finding of packages is too slow due to symlink to large datasets (tons of images)
+# It's never just runtime speed, we'd like the overall user experiment to be smooth
+# Including the process of creating commandline interfaces
+packages = [
+    'easyvolcap',
+    'easyvolcap.engine',
+    'easyvolcap.engine.handlers',
+    'easyvolcap.dataloaders',
+    'easyvolcap.dataloaders.datasets',
+    'easyvolcap.models',
+    'easyvolcap.models.samplers',
+    'easyvolcap.models.supervisors',
+    'easyvolcap.official_vggt',
+    'easyvolcap.official_vggt.dependency',
+    'easyvolcap.official_vggt.heads',
+    'easyvolcap.official_vggt.heads.track_modules',
+    'easyvolcap.official_vggt.layers',
+    'easyvolcap.official_vggt.models',
+    'easyvolcap.official_vggt.train_utils',
+    'easyvolcap.official_vggt.training',
+    'easyvolcap.official_vggt.utils',
+    'easyvolcap.runners',
+    'easyvolcap.runners.evaluators',
+    'easyvolcap.runners.visualizers',
+    'easyvolcap.utils',
+    'easyvolcap.utils.custom_flash_attn',
+    'easyvolcap.utils.custom_indexer',
+    'easyvolcap.utils.dinov2',
+    'easyvolcap.utils.dinov2.hub',
+    'easyvolcap.utils.dinov2.layers',
+    'easyvolcap.utils.dinov2.models',
+    'easyvolcap.utils.dinov2.utils',
+    'easyvolcap.utils.gfm',
+    'easyvolcap.utils.pi3',
+    'easyvolcap.utils.pi3.models',
+    'easyvolcap.utils.pi3.models.dinov2',
+    'easyvolcap.utils.pi3.models.dinov2.hub',
+    'easyvolcap.utils.pi3.models.dinov2.layers',
+    'easyvolcap.utils.pi3.models.dinov2.models',
+    'easyvolcap.utils.pi3.models.dinov2.utils',
+    'easyvolcap.utils.pi3.models.layers',
+    'easyvolcap.utils.pi3.utils',
+    'easyvolcap.utils.shaders',
+    'easyvolcap.utils.vae',
+    'easyvolcap.utils.vggt',
+    'easyvolcap.utils.vggt.heads',
+    'easyvolcap.utils.vggt.heads.track_modules',
+    'easyvolcap.utils.vggt.layers',
+    'easyvolcap.utils.vggt.models',
+    'easyvolcap.scripts',
+    'easyvolcap.configs',
+]
+
+# [tool.setuptools.packages.find]
+# include = ["easyvolcap*", "scripts*", "main.py"]
+# exclude = ["data"]
+# where = ["easyvolcap", "scripts", "main.py"]
+
+[tool.setuptools.package-dir]
+"easyvolcap" = "easyvolcap"
+"easyvolcap.configs" = "configs"
+"easyvolcap.assets" = "assets"
+
+[tool.setuptools.package-data]
+"*" = [
+    "*.yaml",
+    "*.json",
+    "*.py",
+    "*.yml",
+    "csrc/*.cpp",
+    "csrc/*.cu",
+
+    "*.ttf",
+    "*.otf",
+    "*.woff",
+    "*.woff2",
+    "*.png",
+    "*.jpg",
+    "*.ply",
+    "*.npz",
+    "*.obj",
+
+    "*.frag",
+    "*.vert",
+    "*.glsl",
+] # yes, .py not needed here, but just for clarification that you can use py for config
+
+[project.scripts]
+evc = "easyvolcap.scripts.wrap:main_entrypoint"
+evc-test = "easyvolcap.scripts.wrap:test_entrypoint"
+evc-train = "easyvolcap.scripts.wrap:train_entrypoint"
+
+evc-ws = "easyvolcap.scripts.wrap:ws_entrypoint"
+evc-sig = "easyvolcap.scripts.wrap:sig_entrypoint"
+evc-gui = "easyvolcap.scripts.wrap:gui_entrypoint"
+evc-dist = "easyvolcap.scripts.wrap:dist_entrypoint"
+evc-prof = "easyvolcap.scripts.wrap:prof_entrypoint"
+evc-acc = "easyvolcap.scripts.wrap:acc_entrypoint"
+evc-pi3 = "easyvolcap.scripts.pi3_infer:main"
+
+# This should only serve as a commanline registration
+# Dependencies are expected to be installed separatedly
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+# NOTE: Somehow, installing with pip install -e ".[dev]" will cause pip to try to install other packages with the dev feature as well..
+# Like running: pip install mediapipe[dev], however such feature doesn't exist in mediapipe, thus the installation fails
+# So we opted to change the name for a full development install from "dev" to "devel"
+# optional-dependencies = { dev = { file = ["requirements-devel.txt"] } }
+optional-dependencies = { devel = { file = ["requirements-devel.txt"] } }

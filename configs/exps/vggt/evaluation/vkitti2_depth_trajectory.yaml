@@ -1,0 +1,5 @@
+configs:
+    - configs/exps/vggt/evaluation/vkitti2_depth_sequential.yaml
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

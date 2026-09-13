@@ -1,0 +1,18 @@
+category	path_pattern	reason
+historical_vggt_wrappers	/aidi/scripts/vggt/submit_official_vggt_5090_sparse_topk*.sh	historical topk/layer ablation wrappers
+historical_vggt_wrappers	/aidi/scripts/vggt/submit_official_vggt_a800_*.sh	old cluster-specific submit wrappers
+historical_vggt_wrappers	/aidi/scripts/vggt/submit_official_vggt_l20_*.sh	old machine-specific submit wrappers
+historical_eval_wrappers	/aidi/scripts/vggt/submit_eval_*	one-off eval submission wrappers
+historical_eval_wrappers	/aidi/scripts/vggt/eval_official_vggt_sparse_datasets_*.sh	older eval variants before unified runner became mainline
+benchmark_debug	/aidi/scripts/vggt/bench_*.py	speed/debug benchmarking, not mainline reproduction
+benchmark_debug	/aidi/scripts/vggt/check_kernel_forward_backward_diff.py	kernel debug helper
+figure_helpers	/aidi/scripts/vggt/render_*.py	figure-generation helpers, keep only if tied to paper figures
+figure_helpers	/aidi/scripts/vggt/export_*_visual*.py	visual export helpers, keep only if tied to paper figures
+baseline_prep	/aidi/scripts/baselines/build_*.py	benchmark construction scripts; useful provenance but not mainline
+baseline_eval	/aidi/scripts/baselines/eval_pi3_*.py	baseline-specific eval helpers superseded by unified records for handoff
+historical_configs	/aidi/configs/vggt/eval_20260505_*.yaml	historical eval configs
+historical_configs	/aidi/configs/vggt/eval_20260508_*.yaml	historical eval configs
+historical_configs	/aidi/configs/vggt/eval_20260511_*.yaml	historical eval configs
+historical_configs	/aidi/configs/vggt/eval_20260512_*.yaml	historical eval configs
+historical_configs	/aidi/configs/vggt/eval_20260513_*.yaml	historical eval configs
+worktrees	/.worktrees	historical worktrees; audit dirty/unmerged state before removal

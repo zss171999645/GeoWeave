@@ -1,0 +1,113 @@
+__temp_vars__:
+  train_generalizable_dataset_cfg: &train_generalizable_dataset_cfg
+    type: GeneralizableDataset
+    split: TRAIN
+    runtime_build: True
+    delete_after_runtime_build: True
+    global_sharding: True
+    dataset_indexing: True
+    parallel_loading: True
+    dataloading_workers: 64
+
+  val_generalizable_dataset_cfg: &val_generalizable_dataset_cfg
+    <<: *train_generalizable_dataset_cfg
+    split: VAL
+    global_sharding: False
+    runtime_build: False
+    dataset_indexing: False
+
+  base_dataset_cfg: &base_dataset_cfg
+    type: MultiviewPointDataset
+    ddp_shard_dataset: False
+    dataloading_workers: 8
+    n_rays: -1
+    proc_max_size: 518
+    proc_align_size: 14
+    max_size: 518
+    align_size: 14
+    disk_dataset: True
+    dist_opt_K: False
+    use_depths: True
+    use_vhulls: False
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+    source_type: DISTANCEROT
+    min_depth_quantile: 0.0
+    max_depth_quantile: 1.0
+    scale_type: DIST
+    portrait_check: False
+    center_crop: True
+    limit_max_aspect_ratio_as_original_ratio: False
+    use_world_coord: True
+    n_srcs_list: null
+    n_srcs_prob: null
+
+  base_business_dataset_cfg: &base_business_dataset_cfg
+    <<: *base_dataset_cfg
+    source_type: MULTIVIEWSEQ
+    scale: 15.0
+    scale_type: MANUAL
+    meta_file: __meta_3ddr.pkl
+    extri_file: extri_pandar.yml
+    extri_3ddr_file: extri_3ddr.yml
+    use_3ddr: True
+    shared_aug_scale_value: True
+    interp_using_t: True
+    closest_using_t: True
+    sparse_interpolate: True
+    use_png_depth: True
+    ims_pattern: "{frame:05d}.jpg"
+    mks_pattern: "{frame:05d}.png"
+    dps_pattern: "{frame:05d}.png"
+    is_bussi_data: True
+
+  train_dataset_cfg: &train_dataset_cfg
+    <<: *base_business_dataset_cfg
+    split: TRAIN
+    aug_scale: 0.1
+    aug_scale_ratio: 1.0
+    aug_image: True
+    aug_image_cojit: True
+    aug_image_cojit_ratio: 0.3
+    extra_src_pool: 36
+    ref_view_type: random_front_ref_view
+
+  val_dataset_cfg: &val_dataset_cfg
+    <<: *base_business_dataset_cfg
+    split: VAL
+    extra_src_pool: 5
+
+dataloader_cfg:
+  dataset_cfg:
+    _delete_: True
+    <<: *train_generalizable_dataset_cfg
+    meta_roots:
+      - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/distort_2000h_v2/train_202603171836
+    metaset_cfgs:
+      - dataset_name: bussinessdriving
+        max_depth: 60
+        prob: 1.0
+        view_sample: [0, 6, 1]
+      - <<: *train_dataset_cfg
+  batch_sampler_cfg:
+    aspect_ratio_range: [0.5, 0.85]
+
+val_dataloader_cfg:
+  dataset_cfg:
+    _delete_: True
+    <<: *val_generalizable_dataset_cfg
+    data_roots_file: val_data_roots.txt
+    meta_roots:
+      - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/distort_2000h_v2/eval1000clip_202603171836
+    metaset_cfgs:
+      - dataset_name: driving_eval1000clip
+        min_depth: 2
+        max_depth: 60
+        view_sample: [0, 6, 1]
+        use_keyframe: True
+      - <<: *val_dataset_cfg
+  sampler_cfg:
+    frame_sample: [0, null, 1500]
+  batch_sampler_cfg:
+    n_srcs_list: [23]
+    n_srcs_prob: [1.0]

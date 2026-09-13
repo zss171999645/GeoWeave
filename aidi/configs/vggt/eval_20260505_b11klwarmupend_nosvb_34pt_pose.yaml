@@ -1,0 +1,79 @@
+run:
+  name: b11klwarmupend_nosvb_34pt_pose_full_20260505
+  gpu_ids: "3,7"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_b11klwarmupend_nosvb_34pt/pose
+  skip_existing: false
+  continue_on_error: true
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/vggt/official/finetune_5090_sparse_20260502_b11klwarmupend_13ds_topk1024_l9_19_nosvb_core4val_v3/34.pt
+  config: aidi/configs/vggt/finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+datasets:
+  re10k:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800_clusterfix/test
+    pose:
+      enabled: true
+      limit_scenes: 0
+  co3dv2:
+    image_root: /horizon-bucket/saturn_v_4dlabel/009_geo/002_data/dust3r_datasets/dust3r_extracted/co3dv2
+    setlist_root: /horizon-bucket/saturn_v_4dlabel/009_geo/002_data/dust3r_datasets/dust3r_extracted/co3dv2
+    anno_dir: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/co3d_official_annos_co3d_setlists_seen41_test
+    shared_image_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/co3d_official_image_mirror_co3d_setlists_seen41_test_full
+    pose:
+      enabled: true
+      num_frames: 10
+  eth3d:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/eth3d
+    pose:
+      enabled: true
+  hiroom:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/hiroom/data
+    pose:
+      enabled: true
+      max_frames: 100
+  scannetpp:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/scannetpp
+    pose:
+      enabled: true
+      max_frames: 100
+  dtu64:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/dtu64
+    pose:
+      enabled: true
+      max_frames: 100
+  7scenes:
+    root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    pose:
+      enabled: true
+      max_frames: 100
+  megadepth1500:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/relpose1500_reloc3r_20260421/megadepth1500
+    manifest_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/relpose1500_reloc3r_20260421/megadepth1500/manifest_reloc3r_compat
+    pose:
+      enabled: true
+      pair_limit: 0
+  scannet1500:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/relpose1500_reloc3r_20260421/scannet1500/scannet_test_1500
+    manifest_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/relpose1500_reloc3r_20260421/scannet1500/manifest_reloc3r_compat
+    pose:
+      enabled: true
+      pair_limit: 0
+  sintel:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    pose:
+      enabled: true
+      limit_seqs: 0
+      require_official_layout: true
+  tum:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/tum_dynamics
+    pose:
+      enabled: true
+      limit_seqs: 0
+      require_official_layout: true
+  scannet:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/scannet_exact100
+    pose:
+      enabled: true
+      limit_seqs: 0
+      require_official_layout: true

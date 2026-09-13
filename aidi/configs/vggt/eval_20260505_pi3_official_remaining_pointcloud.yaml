@@ -1,0 +1,24 @@
+run:
+  name: pi3_official_remaining_pointcloud_full_20260505
+  gpu_ids: "4,5"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_pi3_official_remaining/pointcloud
+  skip_existing: false
+  continue_on_error: true
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/pretrained/pi3/yyfz233_Pi3_model.safetensors
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  7scenes:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    pointcloud:
+      sparse: {enabled: true, max_sequences: 0}
+      dense: {enabled: true, max_sequences: 0}
+  nrgbd:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/NRGBD
+    pointcloud:
+      sparse: {enabled: true, max_sequences: 0}
+      dense: {enabled: true, max_sequences: 0}

@@ -1,0 +1,91 @@
+# Configuration for VGGT
+configs:
+    - configs/exps/vggt/saturnv/driving/vggt_mvseq_driving.yaml
+
+runner_cfg:
+    visualizer_cfg:
+        type: SequentialVisualizer
+        visualizer_cfgs: []
+
+    evaluator_cfg:
+        type: GeometryEvaluator
+        compute_cam_metrics: ['CAM_ACC_AUC','CAM_EVO']
+        compute_dpt_metrics: ["DPT","MVS_DPT_DYNAMIC"]
+        compute_xyz_metrics: ['XYZ']
+        fixscale: True
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: False # use the custom VGGT batching
+        load_pretrained: True
+        use_cam_emb: True  # use camera embedding
+        use_3ddr: True
+        cam_embed_cfg:
+            type: CamMlp
+            in_features: 10
+            hidden_features: 1024
+            out_features: 4096
+            
+val_dataloader_cfg:
+    num_workers: 8
+    dataset_cfg:
+        dataloading_workers: 8
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        meta_roots:
+            - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/v7_20250902/20250506
+            # - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/v7_20250902/20250506/Cloudy_Site_113_17429_23_06844_0/DZ878_20240822_013134
+
+        metaset_cfgs:
+          - dataset_name: "bussinesseval"
+            ratio: 1.0
+            interp_using_t: True
+            closest_using_t: True
+            sparse_interpolate: True
+            min_depth: 2
+            max_depth: 60
+            img_list_file: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/20250522/eval_imglist.txt
+            use_png_depth: True
+            ims_pattern: '{frame:05d}.jpg'
+            dps_pattern: '{frame:05d}.png'
+
+          - type: MultiviewPointDataset
+            dataloading_workers: 8
+            n_rays: -1
+            max_size: 518 # use this to resize the image
+            align_size: 14 # align the image to this size
+            ratio: 1.0
+            closest_using_t: True
+            view_sample: [0, 6, 1] # use all views by default
+            n_srcs_list: [29]
+            n_srcs_prob: [1.0]
+            extra_src_pool: 4
+            disk_dataset: True # to avoid loading all data into memory
+            dist_opt_K: False # no distortion for synthetic data
+            use_depths: True # have ground truth depths
+            source_type: MULTIVIEWSEQ
+            use_world_coord: True
+            scale: 15.0
+            scale_type: MANUAL
+            min_depth: 2
+            max_depth: 60
+            meta_file: __meta_3ddr.pkl
+            use_3ddr: True
+            use_dynamic_masks: True
+            use_segs: True
+            min_depth_quantile: 0.0
+            max_depth_quantile: 1.0
+
+        data_roots_file: data_roots.txt
+
+    sampler_cfg:
+        type: DistributedSequentialSampler
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+    batch_sampler_cfg:
+        n_srcs_list: [29]
+        n_srcs_prob: [1.0]
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

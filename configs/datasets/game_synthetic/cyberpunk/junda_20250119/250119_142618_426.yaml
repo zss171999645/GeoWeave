@@ -1,0 +1,11 @@
+configs: configs/datasets/game_synthetic/cyberpunk.yaml
+
+dataloader_cfg: # we see the term "dataloader" as one word?
+    dataset_cfg: &dataset_cfg
+        data_root: data/datasets/game_synthetic/2077/2077_junda_20250119/250119_142618_426/check_dir/easyvolcap
+        cameras_dir: cameras/igcsgt
+        frame_sample: [0, null, 1]
+
+val_dataloader_cfg:
+    dataset_cfg:
+        <<: *dataset_cfg

@@ -1,0 +1,128 @@
+extends: eval_20260508_four_baselines_all_tasks_base.yaml
+
+run:
+  name: old_topk1024_pt79_remaining_all_tasks_20260511
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260511_old_topk1024_pt79/remaining_all_tasks
+  skip_existing: true
+  continue_on_error: true
+  allow_co3dv2_videodepth: false
+  auto_skip_known_oom_official_videodepth_on_5090: false
+  env:
+    VGGT_INDEXER_TOPK_FWD_MODE: triton
+    VGGT_INDEXER_TOPK_OUTER_QUERY_CHUNK: "12288"
+    VGGT_DSA_SPARSE_STREAM_QCHUNK: "12288"
+    VGGT_INDEXER_SCORE_DIRECT_OUT: "1"
+    VGGT_INDEXER_TOPK_REUSE_BUFFER: "1"
+    VGGT_INDEXER_TOPK_REUSE_OUT: "1"
+    VGGT_INDEXER_TOPK_SORTED: "0"
+    VGGT_INDEXER_TOPK_AUTO_QUERY_CHUNK: "1"
+    VGGT_INDEXER_TOPK_MERGE_INDEX_KERNEL: "1"
+    VGGT_INDEXER_TOPK_MERGE_INDEX_BLOCK_K: "256"
+    VGGT_INDEXER_SCORE_USE_TC: "1"
+    VGGT_INDEXER_SCORE_BUCKET_POLICY: auto_tc_v1
+    VGGT_INDEXER_SCORE_BLOCK_M: "64"
+    VGGT_INDEXER_SCORE_BLOCK_N: "256"
+    VGGT_INDEXER_SCORE_NUM_WARPS: "8"
+    VGGT_INDEXER_SCORE_NUM_STAGES: "1"
+    VGGT_INDEXER_TOPK_PERSIST_WORKSPACE: "1"
+    VGGT_INDEXER_TOPK_PERSIST_WORKSPACE_MODE: pool
+    VGGT_INDEXER_TOPK_CACHE_ARANGE: "1"
+    VGGT_INDEXER_TOPK_ARANGE_CACHE_MAX: "8"
+    VGGT_SPARSE_FLASH_ATTN: "1"
+    VGGT_SPARSE_FLASH_DISABLE_ATTN_SUM: "1"
+    VGGT_SPARSE_FLASH_DIRECT_BHTD: "1"
+    VGGT_SPARSE_FLASH_NO_QKV_CONTIG: "1"
+    VGGT_SPARSE_FLASH_NO_KV_CONTIG: "1"
+    VGGT_DSA_SPARSE_STREAM_FASTPATH: "1"
+    VGGT_DSA_SPARSE_STREAM_FORCE_V_CONTIG: "1"
+    VGGT_DSA_SPARSE_STREAM_RECORD_LAST: "0"
+    PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/vggt/official/finetune_5090_sparse_20260329_resumept30_oldlogic_keepdecay_ep80_2x8_chunk2_topk1024_tbfix_v1/79.pt
+  config: aidi/configs/vggt/finetune_5090_sparse_20260329_resumept30_oldlogic_keepdecay_ep80_2x8_chunk2_topk1024_tbfix_v1_eval_record_headtype_compat.yaml
+
+datasets:
+  re10k:
+    pose:
+      enabled: false
+
+  co3dv2:
+    pose:
+      enabled: false
+    depth:
+      videodepth:
+        enabled: false
+
+  sintel:
+    pose:
+      enabled: false
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      monodepth:
+        vggt_input_preprocess: official
+      videodepth:
+        vggt_input_preprocess: official
+        vggt_topk_override: 1024
+
+  tum:
+    pose:
+      enabled: false
+
+  scannet:
+    pose:
+      enabled: false
+
+  eth3d:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+    pointcloud:
+      enabled: false
+
+  bonn:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      monodepth:
+        vggt_input_preprocess: official
+      videodepth:
+        vggt_input_preprocess: official
+        vggt_topk_override: 1024
+
+  kitti:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      monodepth:
+        vggt_input_preprocess: official
+      videodepth:
+        vggt_input_preprocess: official
+        vggt_topk_override: 1024
+
+  7scenes:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+
+  blendedmvs:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+
+  mvs_synth:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+
+  vkitti2:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+
+  scannetpp:
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024

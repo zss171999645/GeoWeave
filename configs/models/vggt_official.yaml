@@ -1,0 +1,98 @@
+# Official VGGT-aligned training components
+# Model/loss/optimizer/scheduler aligned with facebookresearch/vggt (training branch)
+
+bucket_cap_mb: 25
+gradient_as_bucket_view: True
+broadcast_buffers: True
+benchmark: False
+deterministic: False
+
+runner_cfg:
+    optimizer_cfg:
+        type: OfficialVGGTOoptimizer
+        optimizer_cfg:
+            type: AdamW
+            lr: 1.0e-4
+            weight_decay: 5.0e-2
+    scheduler_cfg:
+        type: OfficialVGGTScheduler
+        option_schedulers:
+            lr:
+                - scheduler:
+                    type: CompositeParamScheduler
+                    schedulers:
+                        - type: LinearParamScheduler
+                          start_value: 1.0e-8
+                          end_value: 1.0e-4
+                        - type: CosineParamScheduler
+                          start_value: 1.0e-4
+                          end_value: 1.0e-8
+                    lengths: [0.05, 0.95]
+                    interval_scaling: ['rescaled', 'rescaled']
+            weight_decay:
+                - scheduler:
+                    type: ConstantParamScheduler
+                    value: 5.0e-2
+
+    gradient_clipper_cfg:
+        type: OfficialGradientClipper
+        configs:
+            - module_name: ["aggregator"]
+              max_norm: 1.0
+              norm_type: 2
+            - module_name: ["depth"]
+              max_norm: 1.0
+              norm_type: 2
+            - module_name: ["camera"]
+              max_norm: 1.0
+              norm_type: 2
+            - module_name: ["point"]
+              max_norm: 1.0
+              norm_type: 2
+
+    train_use_amp: True
+    amp_dtype: bfloat16
+    gradient_accumulation_steps: 3
+
+    epochs: 100
+    ep_iter: 800
+    log_interval: 1
+
+model_cfg:
+    _delete_: True
+    type: OfficialVGGTModel
+    pretrained_path: ""
+    agg_ckpt: ""
+    cam_ckpt: ""
+    xyz_ckpt: ""
+    dpt_ckpt: ""
+    tra_ckpt: ""
+    pretrained_strict: True
+    vggt_cfg:
+        img_size: 518
+        patch_size: 14
+        embed_dim: 1024
+        enable_camera: True
+        enable_depth: True
+        enable_point: True
+        enable_track: False
+    loss_cfg:
+        camera:
+            weight: 5.0
+            loss_type: "l1"
+            gamma: 0.6
+            pose_encoding_type: "absT_quaR_FoV"
+            weight_trans: 1.0
+            weight_rot: 1.0
+            weight_focal: 0.5
+        depth:
+            weight: 1.0
+            gradient_loss_fn: "grad"
+            valid_range: 0.98
+        point:
+            weight: 1.0
+            gradient_loss_fn: "grad"
+            valid_range: 0.98
+        track: null
+    frozen_module_names:
+        - "*aggregator.patch_embed*"

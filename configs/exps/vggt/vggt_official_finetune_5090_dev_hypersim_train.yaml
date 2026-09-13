@@ -1,0 +1,97 @@
+# Dev-only local validation config for 5090 container.
+# Use a single verified-readable root so local multi-GPU smoke can exercise
+# sparse training logic and checkpoint save without dataset permission noise.
+
+configs:
+  - configs/exps/vggt/vggt_official_finetune_5090.yaml
+
+__temp_vars__:
+  dev_meta_root: &dev_meta_root /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train
+
+  dev_train_dataset_cfg: &dev_train_dataset_cfg
+    type: MultiviewPointDataset
+    ddp_shard_dataset: False
+    dataloading_workers: 8
+    n_rays: -1
+    proc_max_size: 518
+    proc_align_size: 14
+    disk_dataset: True
+    dist_opt_K: False
+    use_depths: True
+    use_vhulls: False
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+    source_type: DISTANCEROT
+    min_depth_quantile: 0.0
+    max_depth_quantile: 1.0
+    scale_type: DIST
+    portrait_check: False
+    center_crop: True
+    limit_max_aspect_ratio_as_original_ratio: False
+    use_world_coord: True
+    n_srcs_list: null
+    n_srcs_prob: null
+    split: TRAIN
+    aug_scale: 0.2
+    aug_scale_ratio: 1.0
+    aug_image: True
+    aug_image_cfg:
+      color_jitter:
+        brightness: 0.5
+        contrast: 0.5
+        saturation: 0.5
+        hue: 0.1
+        p: 0.9
+      gray_scale: True
+      gau_blur: False
+    aug_image_cojit: True
+    aug_image_cojit_ratio: 0.3
+    extra_src_pool: 88
+
+  dev_val_dataset_cfg: &dev_val_dataset_cfg
+    type: MultiviewPointDataset
+    ddp_shard_dataset: False
+    dataloading_workers: 8
+    n_rays: -1
+    proc_max_size: 518
+    proc_align_size: 14
+    disk_dataset: True
+    dist_opt_K: False
+    use_depths: True
+    use_vhulls: False
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+    source_type: DISTANCEROT
+    min_depth_quantile: 0.0
+    max_depth_quantile: 1.0
+    scale_type: DIST
+    portrait_check: False
+    center_crop: True
+    limit_max_aspect_ratio_as_original_ratio: False
+    use_world_coord: True
+    n_srcs_list: null
+    n_srcs_prob: null
+    split: VAL
+    extra_src_pool: 0
+
+dataloader_cfg:
+  dataset_cfg:
+    meta_roots:
+      - *dev_meta_root
+    metaset_cfgs:
+      - dataset_name: "hypersim/train"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 1.0
+      - <<: *dev_train_dataset_cfg
+
+val_dataloader_cfg:
+  dataset_cfg:
+    meta_roots:
+      - *dev_meta_root
+    metaset_cfgs:
+      - dataset_name: "hypersim/train"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 1.0
+      - <<: *dev_val_dataset_cfg

@@ -1,0 +1,19 @@
+run:
+  name: vggt_geoweave_pt79_handoff_eth3d_pose_smoke
+  gpu_ids: auto
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/geoweave_paper_handoff_eval/smoke_vggt_eth3d_pose
+  skip_existing: false
+  continue_on_error: false
+
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/geoweave_paper_handoff_20260602_final/vggt_geoweave_20260503_pt79/79.pt
+  config: aidi/configs/vggt/finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+
+datasets:
+  eth3d:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/eth3d
+    pose:
+      enabled: true
+      max_frames: 12

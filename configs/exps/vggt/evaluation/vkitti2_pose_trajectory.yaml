@@ -1,0 +1,11 @@
+configs:
+    - configs/exps/vggt/evaluation/vkitti2_pose_sequential.yaml
+
+runner_cfg:
+    evaluator_cfg:
+        compute_cam_metrics: ['CAM_TRAJ_EVO']
+        compute_dpt_metrics: []
+        compute_xyz_metrics: []
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

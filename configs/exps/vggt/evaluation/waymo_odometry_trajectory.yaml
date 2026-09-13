@@ -1,0 +1,79 @@
+# Fix the random seed and set deterministic behavior
+fix_random: True
+deterministic: True
+
+configs:
+    - configs/base.yaml
+    - configs/models/vggt.yaml
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: True
+
+runner_cfg:
+    evaluator_cfg:
+        compute_cam_metrics: ['CAM_TRAJ_EVO']
+        compute_dpt_metrics: []
+        compute_xyz_metrics: []
+
+val_dataloader_cfg:
+    num_workers: 0
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        runtime_build: False
+        dataset_indexing: True
+        parallel_loading: True
+        dataloading_workers: 64
+        disk_dataset: True
+        write_data_roots: False
+        fix_random: True
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        meta_roots: []
+        metaset_cfgs: []
+        data_roots:
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/163453191
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/183829460
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/315615587
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/346181117
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/371159869
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/405841035
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/460417311
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/520018670
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/scatt3r_evaluation/waymo_open_dataset_v1_4_3/610454533
+        dataset_cfgs:
+            - type: MultiviewPointDataset
+              dataset_idx: 0
+              prob: 1.0
+              dataset_name: "waymo_open_dataset_v1_4_3"
+              ims_pattern: '{frame:06d}.png'
+              ddp_shard_dataset: False
+              n_rays: -1
+              max_size: 518
+              align_size: 14
+              disk_dataset: True
+              dist_opt_K: False
+              use_masks: False
+              use_depths: False
+              use_vhulls: False
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              interp_using_t: True
+              closest_using_t: True
+              source_type: SEQUENTIAL
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              scale_type: DIST
+              n_srcs_list: [99]
+              n_srcs_prob: [1.0]
+    sampler_cfg:
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+    batch_sampler_cfg:
+        n_srcs_list: [99]
+        n_srcs_prob: [1.0]
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

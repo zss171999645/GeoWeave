@@ -1,0 +1,25 @@
+category	path	reason
+baseline	e631d7c50c5bc1c6fb2c0515c9d87da80981b12f	paper method code baseline before archive-index tag
+release	/release/geoweave_paper_handoff/anonymous_model	model-only submitted GeoWeave package extracted from baseline
+vggt_core	/easyvolcap/official_vggt/layers/dsa_attention.py	selected-context attention implementation
+vggt_core	/easyvolcap/official_vggt/layers/indexer.py	lightweight dependency scorer
+vggt_core	/easyvolcap/official_vggt/layers/block.py	DSABlock integration
+vggt_core	/easyvolcap/official_vggt/models/aggregator.py	global-block integration
+vggt_core	/easyvolcap/models/official_vggt_model.py	EasyVolcap train/eval wrapper and indexer state
+kernel	/easyvolcap/utils/custom_indexer	top-k and indexer loss kernels
+kernel	/easyvolcap/utils/custom_flash_attn	sparse indexed attention kernels
+pi3_core	/aidi/third_party/pi3_training/pi3/models/pi3_training.py	Pi3 training model with GeoWeave integration
+pi3_core	/aidi/third_party/pi3_training/pi3/models/layers/block.py	Pi3 DSABlockRope integration
+pi3_core	/aidi/third_party/pi3_training/trainers/pi3_trainer.py	Pi3 optimizer/state/loss integration
+train_entry	/aidi/scripts/vggt/train_official_vggt.sh	VGGT training entry
+train_entry	/aidi/scripts/pi3/train_pi3_official.sh	Pi3 training entry
+eval_entry	/aidi/scripts/vggt/run_unified_eval.py	unified inference/evaluation runner
+config	/configs/models/vggt_official_finetune.yaml	VGGT model config
+config	/configs/exps/vggt/vggt_official_finetune_5090_paper.yaml	VGGT paper training config family
+config	/aidi/third_party/pi3_training/configs/model/pi3.yaml	Pi3 model config
+config	/aidi/third_party/pi3_training/configs/train/train_pi3_lowres_indexer_warmup.yaml	Pi3 warm-up training config
+config	/aidi/third_party/pi3_training/configs/train/train_pi3_lowres_indexer_sparse.yaml	Pi3 sparse training config
+records	/aidi/docs/vggt_train_test_protocol_overview.md	protocol taxonomy
+records	/aidi/docs/vggt_paper_eval_results.md	paper result summary
+records	/aidi/docs/submit_records.md	submit traceability
+records	/aidi/docs/records/experiment.md	experiment traceability

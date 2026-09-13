@@ -1,0 +1,8 @@
+# Configuration for ENeRF
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/gfm.yaml # network model configuration
+    - configs/datasets/game_synthetic/cyberpunk/junda_20250119/250119_142618_426.yaml # dataset usage configuration
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

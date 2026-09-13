@@ -1,0 +1,151 @@
+# Fix the random seed and set deterministic behavior
+fix_random: True
+deterministic: True
+
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: True # use the custom VGGT batching
+
+runner_cfg:
+    evaluator_cfg:
+        compute_cam_metrics: ['CAM_ACC_AUC']
+        compute_dpt_metrics: []
+        compute_xyz_metrics: []
+
+val_dataloader_cfg:
+    num_workers: 0 # make fix_random and deterministic work
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        runtime_build: False
+        dataset_indexing: True
+        parallel_loading: True
+        dataloading_workers: 64
+        disk_dataset: True
+        fix_random: True
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        meta_roots: []
+        metaset_cfgs: []
+        data_roots:
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/000c3ab189999a83
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/00cf0a94235771bb
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/01a2277ee817b310
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/024908906fadb408
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/03482c3bd66de195
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/03ef5f13e0a30864
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/04b580ea1f4df0a5
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/058c67085c217b96
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0667d5bedfdbc555
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/071e8c0978097efd
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/07e8ffa32746c7ce
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/08d5cde674e47324
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0a3b5fb184936a83
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0b04644621e97d30
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0be9a0dcbfe032f1
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0c788e368d993870
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0cf444aef3ba16bd
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0db2394602b8b81c
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0e5b9dcdb891b82b
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0ef15055b44649e3
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/0f7e8bf1137abcac
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/10ad4fc499c48b38
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/11e9cb1ccb9abe9f
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/129b5e9b80cc4b4b
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/13ac6a6a3a4f5e5d
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/14f0b962fabfaae2
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/15bc7fa1ed5567cc
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/16930ebf3f0f6b84
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/172c99489b18e0e6
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/17d841670d2da942
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/18c6473be3bd827a
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/19ec130ecea98d5e
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/1c144e2404c5da89
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/1cddaac7be8ecfa5
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/1dcd8aee9a39a61a
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/1ec7e7dce1175aee
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/1fb651cd12893f99
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/206d9828d717139e
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/21840c44aed0ae43
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2245fcd7f76c2ecd
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/23099812f662b3ec
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/240e89ef33ff15b6
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/24d97ac8e96e7a5e
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/282ad05cb0113543
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/28f59b68509ce59d
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/29f0d7c051d80035
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2ac712ac8d2fd488
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2b4e1061f6415a4a
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2c55c5a96b50ab36
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2d0bd035f7df86b0
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2da38ca64192354f
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2e7b5f8836ab642c
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/2fca5797ae48529b
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3094afb27266ee6a
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3172feb32990cf09
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3289ad7a811d2348
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/33517e9838fe5f20
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/33f7565ccb685cb7
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/375a7fbf80d09c92
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3814a3a8046c8af3
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3928ea8b8c134846
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/39e5f256790c3343
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3ab70559ec30a57c
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3b84ac07fd85bb3f
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3c85dbda51f7e9b3
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3d6ed8b43655929b
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3e4057a188e15ac3
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3f0d9e856d93b8b3
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/3fd084afa49b6499
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/40f92f1e65a5e1dd
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/41d8b4350913ca64
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/42b086af2a1e5d98
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/433742b23712bf06
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/44a85c75cf4a6da8
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/453c980210335f26
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/45f5a75e63afd4a2
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/46e0654ccb5d88cf
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800/test/47a76ca10546fe8f
+        dataset_cfgs:
+            - type: MultiviewPointDataset
+              dataset_idx: 0
+              prob: 1.0
+              dataset_name: "re10k/processed_pose1800"
+              ims_pattern: '{frame:06d}.jpg'
+              extri_type: w2c
+              vggt_official_preprocess: True
+              vggt_official_preprocess_mode: crop
+              max_size: -1
+              align_size: 1
+              interp_using_t: True
+              closest_using_t: True
+              ddp_shard_dataset: False
+              n_rays: -1
+              disk_dataset: True
+              dist_opt_K: False
+              use_masks: False
+              use_depths: False
+              use_vhulls: False
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              source_type: SEQUENTIAL
+              scale_type: DIST
+              n_srcs_list: [9]
+              n_srcs_prob: [1.0]
+    sampler_cfg:
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+    batch_sampler_cfg:
+        n_srcs_list: [9]
+        n_srcs_prob: [1.0]
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

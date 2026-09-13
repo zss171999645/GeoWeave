@@ -1,0 +1,198 @@
+
+cluster: project-4090-4dlabel-release-bcloud
+
+infer_sets: 
+  - driving1
+  - driving2
+  - parking1
+  - parking2
+  - mechannical_4v
+  - mechannical_10v
+  # - mvs_driving
+  # - mvs_parking
+  # - mvs_mechanical
+
+driving1:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/1009/stage2_no2_updateclipinfer2/driving/6v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  pandar_gtpath: /horizon-bucket/saturn_v_4dlabel/006_4dlabel_hde/000_static_visual/release_eval/visual_eval_gt/pandar_gt_v10.3.0_driving_newdataset/pandar_b_c_20250823_170245
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/gps_mode/output/driving_20251015_030842
+  gt_type: pandar
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+      - cbd_day_sunny_b/Site_121_49192_31_14424_0
+      - cbd_night_rainy/Site_117_16604_39_22072_0
+      - cbd_night_snow/Site_124_87066_48_47741_0
+      - cbd_night_sunny/Site_117_20763_39_20734_0
+      - city_day_snow/Site_124_88045_48_47648_0
+      - emptiness_day_sunny/Site_121_63984_31_24765_0
+      - tree_day_rainy/Site_117_20363_39_15566_0
+      - tree_day_sunny/Site_121_31225_31_25714_0
+      - viaduct_down_day_sunny/Site_121_62085_31_20293_0
+      - viaduct_up_day_sunny_b/Site_121_63968_31_22787_0
+
+
+driving2:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/1009/stage2_no1_sfminput/driving/6v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  pandar_gtpath: /horizon-bucket/saturn_v_4dlabel/006_4dlabel_hde/000_static_visual/release_eval/visual_eval_gt/pandar_gt_v8.3.0_driving/pandar_20250414_173757
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/000_mvs_data/driving_data/20250506
+  gt_type: pandar
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - Cloudy/Site_113_17429_23_06844_0
+    - Cloudy/Site_113_23344_23_08493_0
+    - Rainy/Site_113_22431_23_08573_0
+    - Rainy/Site_113_52809_22_71577_0
+    - SnowyDay/Site_116_29795_40_09493_0
+    - SnowyDay/Site_116_55175_40_11639_0
+    - Sunny/Site_104_01825_30_82245_0
+    - Sunny/Site_104_04206_30_76423_0
+
+
+parking1:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/1009/stage2_no1_sfminput/parking/6v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  pandar_gtpath: /horizon-bucket/saturn_v_4dlabel/006_4dlabel_hde/000_static_visual/release_eval/visual_eval_gt/pandar_gt_v10.3.0_packlist_parking_newdataset/pandar_b_c_20250823_170228
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_20250830_120615
+  gt_type: pandar
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    # - sfm_sitename,pandar_sitename
+    - DZ002/20250612_D/garage__1749676388781__1,DZ002/20250612_D/garage__1749676388781__3
+    - DZ660/20250612_D/garage__1749728354431__2,DZ660/20250612_D/garage__1749728354431__4
+    - DZ970/20250324_D/garage__1742791804255__0,DZ970/20250324_D/garage__1742791804255__2
+
+parking2:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/1009/stage2_no1_sfminput/parking/6v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  pandar_gtpath: /horizon-bucket/saturn_v_4dlabel/006_4dlabel_hde/000_static_visual/release_eval/visual_eval_gt/pandar_gt_v10.3.0_packlist_parking_newdataset/pandar_b_c_20250824_045847
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_20250830_120615
+  gt_type: pandar
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    # - sfm_sitename ,pandar_sitename
+    - DZ002/20250616_D/garage__1750062038000__25,DZ002/20250616_D/garage__1750062038000__13
+    - DZ580/20250716_D/garage__1752656453000__17,DZ580/20250716_D/garage__1752656453000__5
+    - DZ727/20250421_D/garage__1745246253718__15,DZ727/20250421_D/garage__1745246253718__3
+
+
+mechannical_4v:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/1009/stage2_no1_sfminput/mechannical/4v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/park_mechanical_20250830_141904
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/park_mechanical_20250830_141904
+  gt_type: sfm
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 4v
+  sites:
+      - DZ298/20240821_D/garage__1724211568769__11
+      - DZ298/20241105_D/garage__1730775214572__10
+      - DZ298/20241105_D/garage__1730771092726__38
+      - DZ298/20241214_D/garage__1734158281200__42
+      - DZ298/20241102_D/garage__1730522836176__35
+      - DZ298/20240906_D/garage__1725592426102__16
+      - DZ298/20240906_D/garage__1725600069794__2
+      - DZ298/20240906_D/garage__1725605732047__9
+      - DZ298/20241025_D/garage__1729820603608__4
+      - DZ298/20241026_D/garage__1729906664590__49
+
+mechannical_10v:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/1009/stage2_no1_sfminput/mechannical/10v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/park_mechanical_20250830_141904
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/park_mechanical_20250830_141904
+  gt_type: sfm
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 10v
+  sites:
+      - DZ298/20240821_D/garage__1724211568769__11
+      - DZ298/20241105_D/garage__1730775214572__10
+      - DZ298/20241105_D/garage__1730771092726__38
+      - DZ298/20241214_D/garage__1734158281200__42
+      - DZ298/20241102_D/garage__1730522836176__35
+      - DZ298/20240906_D/garage__1725592426102__16
+      - DZ298/20240906_D/garage__1725600069794__2
+      - DZ298/20240906_D/garage__1725605732047__9
+      - DZ298/20241025_D/garage__1729820603608__4
+      - DZ298/20241026_D/garage__1729906664590__49
+
+mvs_driving:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/0923_multi_24/stage2_fixmaxdepth_epoch30_3ddrinput/driving_20250915_035038/6v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_20250922_164430
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_20250922_164430
+  gt_type: sfm
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+      # - DZ005/20250329_D/garage__1743229965000__0
+      # - DZ035/20250313_D/garage__1741824990397__1
+      - DZ6732/20250607_D/garage__1749307870048__2
+      # - DZ035/20250522_D/garage__1747915077000__3
+      # - DZ699/20250207_D/garage__1738877362210__4
+
+
+mvs_parking:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/0923/stage2_fixmaxdepth_epoch30_3ddrinput/driving_parking_20250922_160909/6v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_20250922_160909
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_20250922_160909
+  gt_type: sfm
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ035/20240814_D/garage__1723606330000__0
+    - DZ970/20240823_D/garage__1724401990114__1
+    - DZ970/20250324_D/garage__1742791804255__2
+    - DZ660/20250612_D/garage__1749728354431__3
+    - DZ907/20250430_D/garage__1745975457086__4
+
+
+mvs_mechanical:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/tmpdata/0923/stage2_fixmaxdepth_epoch30_3ddrinput/driving_parking_20250922_160909/4v
+  weight_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/trained_model/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/latest.pt
+  config_path: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/0927/8x8_1e-4_stage2_resumebase_No2/1759622890.yaml
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/park_mechanical_20250922_160909
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/park_mechanical_20250922_160909
+  gt_type: sfm
+  save_pointcloud: True
+  use_cam_emb: True
+  mvseq: True
+  sensors: 4v
+  sites:
+      - DZ298/20250407_D/garage__1743992489000__0
+      - DZ901/20250403_D/garage__1743639382506__1
+      - DZ937/20250320_D/garage__1742482695240__2
+      - DZ768/20250701_D/garage__1751333581500__3
+      - DZ727/20250421_D/garage__1745246253718__4
+
+

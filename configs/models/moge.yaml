@@ -1,0 +1,95 @@
+dataloader_cfg: &dataloader_cfg
+    dataset_cfg: &dataset_cfg # type: MultiviewPointDataset
+        type: MultiviewPointDataset
+        n_rays: -1
+        view_sample: [0, null, 1] # use all views by default
+        frame_sample: [0, null, 1] # use all views by default
+        n_srcs_list: [1]
+        n_srcs_prob: [1.0]
+        extra_src_pool: 0
+        use_world_coord: False
+        scale_type: DEPTH
+    batch_sampler_cfg: &batch_sampler_cfg
+        batch_size: 1
+
+val_dataloader_cfg:
+    <<: *dataloader_cfg
+    dataset_cfg:
+        <<: *dataset_cfg
+    sampler_cfg:
+        frame_sample: [0, 1, 1]
+        view_sample: [0, 1, 1]
+
+runner_cfg:
+    record_images_to_tb: False # save time
+
+    optimizer_cfg:
+        lr: 1.e-5 # default
+        eps: 1.e-8
+        weight_decay: 1.e-2
+        lr_table:
+            # encoder: 1.e-6
+            # decoder: 1.e-5
+            encoder: 1.e-5
+            decoder: 1.e-4
+        optimizer_cfg:
+            type: AdamW
+
+    scheduler_cfg:
+        # type: ConfigurableSequentialLR
+        # scheduler_cfgs:
+        #     - type: ConfigurableLambdaLR
+        #       lr_lambda: "max(0.0, min(1.0, (epoch - 1000) / 1000))"
+        #     - type: StepLR
+        #       step_size: 25000
+        #       gamma: 0.5
+        # milestones: [2000]
+        type: StepLR
+        step_size: 25000
+        gamma: 0.5
+
+    evaluator_cfg:
+        type: GeometryEvaluator
+        compute_metrics: ['ND', 'DAC']
+
+    visualizer_cfg:
+        type: SequentialVisualizer
+        visualizer_cfgs:
+            - type: VolumetricVideoVisualizer
+              types: ['DEPTH', 'SRCINPS']
+              store_alpha_channel: False
+              dpt_cm: spectral
+            - type: GeometryVisualizer
+              types: ['POINT']
+              pts_thresh: 2073600
+
+    epochs: 240
+    decay_epochs: 30
+    ep_iter: 500 # 30000 by paper
+    save_latest_ep: 20
+    save_ep: 20
+    eval_ep: 5
+    log_interval: 1
+
+model_cfg:
+    # Custom sampler
+    chunkify_rays: False # let the user handle the output and input
+    let_user_handle_input: True # let the user handle the output and input
+    sampler_cfg:
+        type: MoGeSampler
+
+    # Empty renderer and network
+    renderer_cfg:
+        type: NoopRenderer
+    network_cfg:
+        type: NoopNetwork # no importrance sampling for this
+
+    # Custom loss
+    supervisor_cfg:
+        supervisor_cfgs:
+            - type: PointSupervisor
+        xyz_loss_weight: 1.0
+        xyz_local_loss_weight: 1.0
+        xyz_mask_loss_weight: 1.0
+        xyz_normal_loss_weight: 1.0
+        # xyz_consistency_weight: 0.5

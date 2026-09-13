@@ -1,0 +1,6 @@
+_base_: ./finetune_5090_sparse_topk2048_l9_19_p34_record.yaml
+
+model_cfg:
+    vggt_cfg:
+        indexer_cfg:
+            topk: 1024

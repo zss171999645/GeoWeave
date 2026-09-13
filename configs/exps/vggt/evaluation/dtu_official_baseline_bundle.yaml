@@ -1,0 +1,35 @@
+# OFFICIAL_BASELINE DTU: 继承 paper eval，并导出 POINT ply（供 SampleSet 官方评测）。
+#
+# 论文 Table2 两档设定：
+# - **Known GT camera（表上半，Gipuma/MVSNet 等）**：预测深度 + 数据集 GT 位姿反投影。
+#   启动前设环境变量 `DTU_DEPTH_USE_GT_CAMERA=1`（或 model_cfg.depth_xyz_use_gt_camera=true），
+#   再跑 test；PLY 与内联 xyz 均基于 GT 相机。
+# - **未知相机（表下半，DUSt3R / VGGT Ours）**：预测深度 + 预测相机（默认，`DTU_DEPTH_USE_GT_CAMERA` 未设）。
+#
+# 内联 **Acc / Comp / Overall**（与 metric_utils 中 point_scene_accuracy_completion_overall_noalign 一致，非 SampleSet mm）：
+# - 恢复 `XYZ_SACO_NA` + `DPT`，与此前关闭 Table2-only 时一致。
+# - 论文 Table2 **毫米** 仍以评测脚本生成的 `dtu_table2_mm.json` 为准。
+#
+# OfficialVGGTModel test 时写 `xyz_bcd`（深度×相机）；GeometryVisualizer 优先导出 `xyz_bcd`。
+configs:
+  - configs/exps/vggt/vggt_official_eval_paper.yaml
+
+runner_cfg:
+  evaluator_cfg:
+    type: GeometryEvaluator
+    compute_cam_metrics: ["CAM_ACC_AUC"]
+    compute_dpt_metrics: ["DPT"]
+    compute_xyz_metrics: ["XYZ_SACO_NA"]
+    force_xyz_from_depth: true
+    add_loss_to_metrics: false
+  visualizer_cfg:
+    type: SequentialVisualizer
+    visualizer_cfgs:
+      - type: GeometryVisualizer
+        types: ["POINT"]
+        pts_thresh: 500000
+        dtu_official_ply_export: True
+        dtu_official_ply_fuse: True
+
+model_cfg:
+  depth_xyz_use_gt_camera: false

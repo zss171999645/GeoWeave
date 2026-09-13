@@ -1,0 +1,4 @@
+configs:
+  - configs/datasets/saturnv_horizon_simu100h_20260424.yaml
+
+exp_name: "{{fileBasenameNoExtension}}"

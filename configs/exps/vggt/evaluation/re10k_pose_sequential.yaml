@@ -1,0 +1,75 @@
+# Fix the random seed and set deterministic behavior
+fix_random: True
+deterministic: True
+
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: True # use the custom VGGT batching
+
+runner_cfg:
+    evaluator_cfg:
+        compute_cam_metrics: ['CAM_ACC_AUC']
+        compute_dpt_metrics: []
+        compute_xyz_metrics: []
+
+val_dataloader_cfg:
+    num_workers: 0 # make fix_random and deterministic work
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        runtime_build: False
+        dataset_indexing: True
+        parallel_loading: True
+        dataloading_workers: 64
+        disk_dataset: True
+        write_data_roots: False
+        fix_random: True
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        meta_roots:
+            - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800
+        metaset_cfgs:
+            - dataset_name: "re10k/processed_pose1800"
+              ims_pattern: '{frame:06d}.jpg'
+              dist_opt_K: True
+              extri_type: w2c
+              interp_using_t: True
+              closest_using_t: True
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.98
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              n_rays: -1
+              vggt_official_preprocess: True
+              vggt_official_preprocess_mode: crop
+              max_size: -1
+              align_size: 1
+              disk_dataset: True
+              dist_opt_K: False
+              use_masks: False
+              use_depths: False
+              use_vhulls: False
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              closest_using_t: True
+              source_type: SEQUENTIAL
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              scale_type: DIST
+              n_srcs_list: [9]
+              n_srcs_prob: [1.0]
+    sampler_cfg:
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+    batch_sampler_cfg:
+        n_srcs_list: [9]
+        n_srcs_prob: [1.0]
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

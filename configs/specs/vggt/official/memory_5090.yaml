@@ -1,0 +1,33 @@
+# Official VGGT memory knobs for 32G 5090 nodes
+
+runner_cfg:
+  train_use_amp: True
+  amp_dtype: float16
+  gradient_accumulation_steps: 2
+
+model_cfg:
+  vggt_cfg:
+    memory_cfg:
+      use_xformers: True
+      # Patch-embed chunking has limited gains in large scenes; keep 0 unless needed.
+      patch_embed_chunk_size: 0
+      output_list_cfg:
+        keep_layers: [4, 11, 17, 23]
+        keep_last: True
+    indexer_cfg:
+      # Process attention heads in chunks during warmup (set 0 to disable).
+      head_chunk_size: 1
+      # Keep indexer scores in fp16 to reduce N^2 memory and match fp16 training defaults.
+      score_dtype: fp16
+    depth_head_cfg:
+      type: DPTHeadWithChunkwiseBP
+      chunk_cfg:
+        enabled: True
+        batch_chunk_size: 1
+        frames_chunk_size: 4
+    point_head_cfg:
+      type: DPTHeadWithChunkwiseBP
+      chunk_cfg:
+        enabled: True
+        batch_chunk_size: 1
+        frames_chunk_size: 4

@@ -1,0 +1,36 @@
+# Official VGGT evaluation base config (paper protocol).
+# This intentionally avoids finetune/indexer overrides so OFFICIAL_BASELINE reproductions
+# follow upstream behavior more closely.
+
+configs:
+  - configs/base.yaml
+  - configs/models/vggt_official.yaml
+
+# Keep evaluation lightweight; dataset-specific overrides are injected by eval scripts.
+runner_cfg:
+  test_with_ddp_sharding: False
+  visualizer_cfg:
+    type: SequentialVisualizer
+    visualizer_cfgs: []
+  evaluator_cfg:
+    type: GeometryEvaluator
+    compute_cam_metrics: ["CAM_ACC_AUC"]
+    compute_dpt_metrics: []
+    compute_xyz_metrics: []
+    add_loss_to_metrics: False
+
+model_cfg:
+  dtype: float16
+
+# Important: paper10 eval relies on passing a `dotdict` index into GeneralizableDataset so it
+# can inject `scene_pool` (fixed K views per scene). Base `configs/base.yaml` uses BatchSampler
+# which yields plain integers; switch to ImageBasedBatchSampler for evaluation.
+val_dataloader_cfg:
+  batch_sampler_cfg:
+    type: ImageBasedBatchSampler
+    batch_size: 1
+    # Default n_srcs for VGGT paper pose protocol: total views = n_srcs + 1 = 10
+    n_srcs_list: [9]
+    n_srcs_prob: [1.0]
+    aspect_ratio_range: -1
+    fix_random: True

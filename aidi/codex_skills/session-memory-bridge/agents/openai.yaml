@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Memory Bridge"
+  short_description: "Persist and recall cross-session project memory"
+  default_prompt: "Use this skill to save decisions/results and retrieve startup briefs across Codex sessions."

@@ -1,0 +1,38 @@
+# @package _global_
+
+trainer: trainers.pi3_trainer.Pi3Trainer
+
+train:
+  image_num_range: [2, 24]
+  max_img_per_gpu: 64
+  find_unused_parameters: true
+  static_graph: true
+  resolution:
+    - [224, 224]
+
+model:
+  ckpt: null
+  num_dec_blk_not_to_checkpoint: 999
+  indexer_cfg:
+    enabled: true
+    indexer_layers: "9-21"
+    n_heads: 4
+    head_dim: 64
+    topk: 2048
+    enable_sparse: true
+    warmup_steps: 0
+    sparse_start_step: 0
+    compute_loss: true
+    freeze_indexer: false
+    warmup_only_indexer_loss: false
+    warmup_only_indexer_train: false
+    warmup_optimizer_filter: true
+    warmup_lr: null
+    sparse_lr: 1.0e-5
+    sparse_lr_decay: scheduler
+    sparse_min_lr: null
+    score_dtype: float16
+    sparse_use_mask: false
+    use_sparse_flash_attn: true
+    use_topk_kernel: true
+    init_from_attn: true

@@ -1,0 +1,65 @@
+# VGGT business-control training on distort_2000h_v2 with LIO/3DDR poses.
+configs:
+  - configs/base.yaml
+  - configs/models/vggt.yaml
+  - configs/models/vggt_sample.yaml
+  - configs/datasets/saturnv_distortv2_2000h_260330.yaml
+
+fsdp_enabled: False
+
+runner_cfg:
+  gradient_accumulation_steps: 1
+  fsdp_shard_class_list: ["NestedTensorBlock", "Block", "DPTHead", "CameraHead"]
+  test_with_ddp_sharding: True
+  visualizer_cfg:
+    type: SequentialVisualizer
+    visualizer_cfgs: []
+  evaluator_cfg:
+    type: GeometryEvaluator
+    compute_cam_metrics: ["CAM_ACC_AUC", "CAM_EVO"]
+    compute_dpt_metrics: ["DPT", "DPT_TARGET"]
+    compute_xyz_metrics: ["XYZ"]
+    fixscale: True
+  optimizer_cfg:
+    lr: 2.e-5
+    eps: 1.e-8
+    weight_decay: 5.e-2
+    lr_table:
+      patch_embed: 4.e-6
+    optimizer_cfg:
+      type: AdamW
+  scheduler_cfg:
+    type: WarmupCosineLR
+    warmup_iters: 10000
+  epochs: 160
+  ep_iter: 1000
+  save_latest_ep: 5
+  save_ep: 5
+  eval_ep: 2
+  log_interval: 50
+  test_before_first_epoch: True
+  empty_cache_ep: 1
+
+model_cfg:
+  sampler_cfg:
+    vggt_batching: False
+    load_pretrained: True
+    use_cam_emb: True
+    dinov2_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitl14_reg4_pretrain.pth
+    agg_regator_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/aggregator.pt
+    cam_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/camera.pt
+    xyz_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/point.pt
+    dpt_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/depth.pt
+    tra_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/track.pt
+    use_3ddr: True
+    use_chunkwise_bp_dpt_decoder: True
+    use_chunkwise_checkpoint: True
+    use_xyz_head: False
+    use_dptpose_as_xyz: True
+    cam_embed_cfg:
+      type: CamMlp
+      in_features: 10
+      hidden_features: 1024
+      out_features: 4096
+
+exp_name: "{{fileBasenameNoExtension}}"

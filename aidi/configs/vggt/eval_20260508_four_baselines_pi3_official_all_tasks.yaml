@@ -1,0 +1,10 @@
+extends: eval_20260508_four_baselines_all_tasks_base.yaml
+
+run:
+  name: four_baselines_pi3_official_all_tasks_20260508
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260508_four_baselines/pi3_official
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/pretrained/pi3/yyfz233_Pi3_model.safetensors
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean

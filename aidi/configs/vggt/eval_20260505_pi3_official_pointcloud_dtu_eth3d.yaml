@@ -1,0 +1,26 @@
+run:
+  name: pi3_official_pointcloud_dtu_eth3d_20260505
+  gpu_ids: "1,2"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_pi3_official_remaining/pointcloud_dtu_eth3d
+  skip_existing: true
+  continue_on_error: true
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/pretrained/pi3/yyfz233_Pi3_model.safetensors
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  dtu:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/dtu_test_mvsnet_release_full
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+
+  eth3d:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_root
+    seq_map: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_seqmap.json
+    pointcloud:
+      enabled: true
+      max_sequences: 0

@@ -1,0 +1,49 @@
+run:
+  name: b11klwarmupend_nosvb_34pt_depth_full_20260505
+  gpu_ids: "1"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_b11klwarmupend_nosvb_34pt/depth
+  skip_existing: false
+  continue_on_error: true
+
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/vggt/official/finetune_5090_sparse_20260502_b11klwarmupend_13ds_topk1024_l9_19_nosvb_core4val_v3/34.pt
+  config: aidi/configs/vggt/finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+
+datasets:
+  sintel:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  bonn:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/bonn_pi3/rgbd_bonn_dataset
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  kitti:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/kitti_official_download/depth_selection/val_selection_cropped
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  eth3d:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/eth3d/train
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  7scenes:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  blendedmvs:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/test
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  mvs_synth:
+    data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  scannetpp:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  vkitti2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/vkitti2_resolved
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}
+  co3dv2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/co3dv2/test
+    data_root_candidates:
+      - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/co3dv2/test
+      - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/co3dv2/test
+    data_root_min_categories: 41
+    data_root_min_scenes: 20000
+    depth: {monodepth: {enabled: false, max_seqs: 0, max_frames_per_seq: 0}, videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}}

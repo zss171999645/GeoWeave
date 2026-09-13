@@ -1,0 +1,204 @@
+# ft业务行车数据 ablation结论 https://horizonrobotics.feishu.cn/wiki/Vm9IwO7iVivRCNkk6bjc5APCnHd#K311dPP8LodtYtxCfeZcRaeUnqf
+# 1. pose-weight x5：pose-auc-01提升一个点左右，depth无影响；
+# 2. aug：增加aug对pose和depth均有提升；当前v4版本收益待确认；
+# 3. scaleup x4：pose-auc-01提升2.2个点，depth提升4.3个点；还能进一步scaleup；
+# 4. lr：2x8卡 lr设为1e-5，相较于5e-6 pose-auc-01提升1.4个点，depth提升2个点；
+# 5. vggtbatchsampler：影响不大，pose（translation）有略微收敛加速，depth基本无变化；
+
+# 收敛性质：
+# 1. 默认2x8卡，lr from 2e-5 to 1e-8，160k step：depth在100k左右停止收敛，pose在130k左右停止收敛；
+
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+    - configs/models/vggt_sample.yaml
+
+# FSDP: https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html
+fsdp_enabled: False
+runner_cfg:
+    gradient_accumulation_steps: 2
+    fsdp_shard_class_list: ['NestedTensorBlock', 'Block', 'DPTHead', 'CameraHead']
+    test_with_ddp_sharding: &test_with_ddp_sharding True
+
+    visualizer_cfg:
+        type: SequentialVisualizer
+        visualizer_cfgs: []
+        
+    evaluator_cfg:
+        type: GeometryEvaluator
+        compute_cam_metrics: ['CAM_ACC_AUC','CAM_EVO']
+        compute_dpt_metrics: ["DPT","DPT_TARGET"]
+        compute_xyz_metrics: ['XYZ']
+        fixscale: True
+    
+    optimizer_cfg:
+        lr: 1.e-4 # default 8*8 with accumulation
+        eps: 1.e-8
+        weight_decay: 5.e-2
+        lr_table:
+            patch_embed: 2.e-5 # default 8*8 with accumulation
+        optimizer_cfg:
+            type: AdamW # most common in transformer models
+
+    scheduler_cfg:
+        type: WarmupCosineLR
+        warmup_iters: 0  # xy: add warmup
+
+    epochs: 160 # 160k by paper
+    ep_iter: 1000
+    save_latest_ep: 5  # xy: less to save time
+    save_ep: 4  # xy: less to save time
+    eval_ep: 4  # xy: less to save time
+    log_interval: 50
+    test_before_first_epoch: True
+    empty_cache_ep: 1 # eval_ep
+    
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: False # use the custom VGGT batching
+        load_pretrained: True
+        use_cam_emb: True  # use camera embedding
+        # freeze_list: ["agg_regator", "xyz_decoder", "dpt_decoder"]  # for debug
+        dinov2_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitl14_reg4_pretrain.pth
+        agg_regator_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/aggregator.pt
+        cam_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/camera.pt
+        xyz_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/point.pt
+        dpt_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/depth.pt
+        tra_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/track.pt
+
+dataloader_cfg:
+    num_workers: 8  # xy: modify num_workers here
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: TRAIN
+        runtime_build: True  # modified by xiaoyang, avoid loading all data into memory
+        global_sharding: True
+        dataset_indexing: True
+        parallel_loading: True
+        dataloading_workers: 8  # TODO: not working if runtime_build is True
+        meta_roots:
+            # park datasets
+            - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/parking_data/20250728_mechanical_at128_train
+        metaset_cfgs:
+            # The unified ratio is only used for a placeholder
+            # The actual resolution is determined by the max_size, lazy resizing
+            # Synthetic datasets
+            - dataset_name: "parking_fisheye"
+              ratio: 1.0
+              interp_using_t: True
+              closest_using_t: True
+              sparse_interpolate: True
+              use_png_depth: True
+              max_depth: 60
+              ims_pattern: '{frame:05d}.jpg'
+              mks_pattern: '{frame:05d}.png'
+              dps_pattern: '{frame:05d}.png'
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              is_bussi_data: True
+              scale: 15.0
+              scale_type: MANUAL
+
+
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              dataloading_workers: 8  # xy: pls set dataloading_workers here
+              n_rays: -1
+              proc_max_size: -1 # xy: use this to resize the image
+              proc_align_size: 1 # xy: align the image to this size
+              max_size: 518 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              dist_opt_K: False # no distortion for synthetic data
+              use_depths: True # use ground truth depths
+              use_vhulls: False
+              view_sample: [6, 10, 1]
+              frame_sample: [0, null, 1]
+              source_type: MULTIVIEWSEQ
+              extra_src_pool: 16  # expand the source pool to twice the number of sources
+              scale_type: DIST
+              portrait_check: False
+              center_crop: True  # added by xiaoyang; MAKE fx==fy does not change and the optical center (cx, cy) is at the center of the image
+              limit_max_aspect_ratio_as_original_ratio: False  # added by xiaoyang; limit the maximum aspect ratio as the original image ratio
+              aug_scale: 0.1 # fov augmentation
+              aug_scale_ratio: 1.0
+              aug_image: True # image augmentation
+              aug_image_cojit: True
+              aug_image_cojit_ratio: 0.3 # 30% of the time, use individual image augmentation for each source
+              shared_aug_scale_value: True
+              n_srcs_list: &train_n_srcs_list [
+                  5,
+                  11,
+                  17,
+                  23,
+              ]
+              n_srcs_prob: &train_n_srcs_probs [
+                  1.0,
+                  1.0,
+                  1.0,
+                  0.5
+              ]
+    batch_sampler_cfg:  # config of class ImageBasedBatchSampler; NOTE that if this is set, the n_srcs_list and n_srcs_prob in the dataset_cfg will be ignored
+        aspect_ratio_range: [0.7, 0.9] # random aspect ratio range
+        n_srcs_list: *train_n_srcs_list  # copied from dataset_cfg
+        n_srcs_prob: *train_n_srcs_probs  # copied from dataset_cfg
+        
+
+val_dataloader_cfg:
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        meta_roots:
+            - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/parking_data/20250630_mechanical_at128_eval
+        metaset_cfgs:
+            - dataset_name: "parking_fisheye_val"
+              ratio: 1.0
+              interp_using_t: True
+              closest_using_t: True
+              sparse_interpolate: True
+              min_depth: 0.5
+              max_depth: 60
+              use_png_depth: True
+              ims_pattern: '{frame:05d}.jpg'
+              mks_pattern: '{frame:05d}.png'
+              dps_pattern: '{frame:05d}.png'
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              is_bussi_data: True
+              scale: 15.0
+              scale_type: MANUAL
+
+
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              n_rays: -1
+              proc_max_size: -1 # use this to resize the image
+              proc_align_size: 1 # align the image to this size
+              max_size: 518 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              view_sample: [6, 10, 1]
+              frame_sample: [0, null, 1]
+              n_srcs_list: &val_n_srcs_list [23]
+              n_srcs_prob: &val_n_srcs_probs [1.0]
+              source_type: MULTIVIEWSEQ
+              extra_src_pool: 5  # expand the source pool to twice the number of sources
+              dist_opt_K: False # no distortion for synthetic data
+              use_depths: True # use ground truth depths for evaluation
+              use_world_coord: True
+              scale_type: DIST
+
+    sampler_cfg:
+        type: DistributedSequentialSampler
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 300]
+    batch_sampler_cfg:
+        n_srcs_list: *val_n_srcs_list  # copied from dataset_cfg
+        n_srcs_prob: *val_n_srcs_probs  # copied from dataset_cfg
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

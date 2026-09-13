@@ -1,0 +1,132 @@
+__temp_vars__:
+  train_generalizable_dataset_cfg: &train_generalizable_dataset_cfg
+    type: GeneralizableDataset
+    split: TRAIN
+    runtime_build: True
+    delete_after_runtime_build: True
+    global_sharding: True
+    dataset_indexing: True
+    parallel_loading: True
+    dataloading_workers: 64
+
+  val_generalizable_dataset_cfg: &val_generalizable_dataset_cfg
+    <<: *train_generalizable_dataset_cfg
+    split: VAL
+    global_sharding: False
+    runtime_build: False
+    dataset_indexing: False
+
+  base_dataset_cfg: &base_dataset_cfg
+    type: MultiviewPointDataset
+    ddp_shard_dataset: False
+    dataloading_workers: 8
+    n_rays: -1
+    proc_max_size: 518
+    proc_align_size: 14
+    max_size: 518
+    align_size: 14
+    disk_dataset: True
+    dist_opt_K: False
+    use_depths: True
+    use_vhulls: False
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+    source_type: MULTIVIEWSEQ
+    min_depth_quantile: 0.0
+    max_depth_quantile: 1.0
+    scale: 15.0
+    scale_type: MANUAL
+    use_world_coord: True
+    shared_aug_scale_value: True
+    interp_using_t: True
+    closest_using_t: True
+    sparse_interpolate: True
+    use_png_depth: True
+    ims_pattern: "{frame:05d}.png"
+    dps_pattern: "{frame:05d}.png"
+    use_3ddr: True
+    extri_3ddr_file: extri.yml
+
+  train_dataset_cfg: &train_dataset_cfg
+    <<: *base_dataset_cfg
+    split: TRAIN
+    aug_scale: 0.1
+    aug_scale_ratio: 1.0
+    aug_image: True
+    aug_image_cojit: True
+    aug_image_cojit_ratio: 0.3
+    extra_src_pool: 16
+    ref_view_type: random_front_ref_view
+
+  val_dataset_cfg: &val_dataset_cfg
+    <<: *base_dataset_cfg
+    split: VAL
+    extra_src_pool: 5
+    min_depth: 2
+    max_depth: 60
+
+dataloader_cfg:
+  dataset_cfg:
+    _delete_: True
+    <<: *train_generalizable_dataset_cfg
+    data_roots_file: data_roots.txt
+    meta_roots:
+      - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/horizon_simulation_data/driving_data/20260424
+    metaset_cfgs:
+      - dataset_name: horizon_simulation_data_100h
+        ratio: 1.0
+        max_depth: 60
+        view_sample: [0, 6, 1]
+        ims_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.png"
+        use_png_depth: True
+        is_bussi_data: True
+        interp_using_t: True
+        closest_using_t: True
+        extra_src_pool: 36
+      - <<: *train_dataset_cfg
+  sampler_cfg:
+    frame_sample: [0, null, 1]
+    view_sample: [0, null, 1]
+  batch_sampler_cfg:
+    n_srcs_list: [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+    ]
+    n_srcs_prob: [
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+    ]
+    aspect_ratio_range: [0.5, 0.85]
+
+val_dataloader_cfg:
+  dataset_cfg:
+    _delete_: True
+    <<: *val_generalizable_dataset_cfg
+    data_roots_file: val_data_roots.txt
+    meta_roots:
+      - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/horizon_simulation_data/driving_data/20260424
+    metaset_cfgs:
+      - dataset_name: horizon_simulation_data_100h
+        img_list_file: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/horizon_simulation_data/driving_data/20260424/eval_keyframes.txt
+        min_depth: 2
+        max_depth: 60
+        view_sample: [0, 6, 1]
+        ims_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.png"
+        use_png_depth: True
+        use_keyframe: True
+        use_gt_keyframe: True
+        is_bussi_data: True
+        interp_using_t: True
+        closest_using_t: True
+      - <<: *val_dataset_cfg
+  sampler_cfg:
+    type: DistributedSequentialSampler
+    frame_sample: [0, null, 400]
+    view_sample: [0, null, 1]
+  batch_sampler_cfg:
+    n_srcs_list: [23]
+    n_srcs_prob: [1.0]
+    aspect_ratio_range: -1

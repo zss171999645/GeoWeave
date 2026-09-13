@@ -1,0 +1,27 @@
+# Official VGGT memory knobs for A800 nodes (conservative)
+
+runner_cfg:
+  train_use_amp: True
+  amp_dtype: float16
+  gradient_accumulation_steps: 2
+
+model_cfg:
+  dtype: float16
+  vggt_cfg:
+    memory_cfg:
+      use_xformers: True
+      # Patch-embed chunking has limited gains in large scenes; keep 0 unless needed.
+      patch_embed_chunk_size: 0
+      output_list_cfg:
+        keep_layers: [4, 11, 17, 23]
+        keep_last: True
+    indexer_cfg:
+      # Process attention heads in chunks during warmup (set 0 to disable).
+      head_chunk_size: 1
+      score_dtype: fp16
+      # Use topk attention mask + SDPA (dense mask) for sparse stage.
+      sparse_use_mask: True
+    depth_head_cfg:
+      type: DPTHead
+    point_head_cfg:
+      type: DPTHead

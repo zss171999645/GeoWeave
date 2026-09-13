@@ -1,0 +1,42 @@
+run:
+  name: vggt_official_fill_blanks_20260505
+  gpu_ids: "0,1"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_official_fill_table_blanks
+  save_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline
+  skip_existing: false
+  continue_on_error: true
+  auto_skip_known_oom_official_videodepth_on_5090: false
+
+model:
+  kind: official
+  official_ckpt_root: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B
+
+datasets:
+  7scenes:
+    root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    pose:
+      enabled: true
+      max_frames: 100
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+
+  bonn:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/bonn_pi3/rgbd_bonn_dataset
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+
+  vkitti2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/vkitti2_resolved
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0

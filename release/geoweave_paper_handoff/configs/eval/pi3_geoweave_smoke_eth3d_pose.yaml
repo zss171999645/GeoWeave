@@ -1,0 +1,25 @@
+run:
+  name: pi3_geoweave_checkpoint79_handoff_eth3d_pose_smoke
+  gpu_ids: auto
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/geoweave_paper_handoff_eval/smoke_pi3_eth3d_pose
+  env:
+    PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+    VGGT_INDEXER_TOPK_OUTER_QUERY_CHUNK: "8192"
+  skip_existing: false
+  continue_on_error: false
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/geoweave_paper_handoff_20260602_final/pi3_geoweave_native_sparse_20260505_checkpoint_79/checkpoint_79/pytorch_model.bin
+  pi3_config: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/geoweave_paper_handoff_20260602_final/pi3_geoweave_native_sparse_20260505_checkpoint_79/config.yaml
+  pi3_model_impl: native_sparse
+  pi3_native_root: aidi/third_party/pi3_training
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  eth3d:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/eth3d
+    pose:
+      enabled: true
+      max_frames: 12

@@ -1,0 +1,156 @@
+# @package _global_
+
+model:
+    _target_: pi3.models.pi3_training.Pi3
+    pos_type: rope100
+    decoder_size: large
+    load_vggt: true
+    freeze_encoder: true
+    encoder_attn_backend: auto
+    decoder_attn_backend: auto
+    use_pose_prior: false
+    pose_prior_required: false
+    pose_prior_dropout: 0.0
+    pose_prior_format: vggt_w2c_quat10
+    use_global_points: false
+    train_conf: false
+    num_dec_blk_not_to_checkpoint: 4
+    qk_norm_chunk_size: 0
+    head_use_checkpoint: false
+    head_view_chunk_size: 0
+    ckpt: null # <path-to-your-pretrain-checkpoint>
+    indexer_init_ckpt: null
+    indexer_cfg:
+        enabled: false
+        indexer_layers: null      # global attention layer idx (0-based), e.g. "9-21"
+        n_heads: 4
+        head_dim: 64
+        topk: 512
+        enable_sparse: true
+        inference_sparse: false
+        warmup_steps: 0
+        sparse_start_step: 0
+        compute_loss: true
+        freeze_indexer: false
+        warmup_only_indexer_loss: true
+        warmup_only_indexer_train: true
+        warmup_optimizer_filter: true
+        loss_weight: 1.0
+        warmup_loss_weight: 1.0
+        sparse_loss_weight: 1.0
+        warmup_lr: null
+        sparse_lr: null
+        sparse_lr_decay: scheduler
+        sparse_min_lr: null
+        eps: 1.0e-6
+        detach_input: true
+        score_dtype: ""
+        head_chunk_size: 0
+        score_head_chunk_size: 0
+        score_key_chunk_size: 0
+        streaming_kl_loss: false
+        streaming_kl_autograd: false
+        warmup_indexer_loss_mode: kl
+        warmup_topk_coverage_k: 1024
+        warmup_topk_coverage_chunk_size: 128
+        warmup_topk_coverage_query_chunk_size: 256
+        warmup_topk_coverage_query_sample_size: 0
+        warmup_no_grad_attn: true
+        sparse_use_mask: false
+        use_sparse_flash_attn: true
+        use_topk_kernel: true
+        use_dense_flash_attn_warmup_kernel: false
+        topk_block: 256
+        force_keep_special_tokens: false
+        force_keep_special_in_topk_budget: false
+        force_keep_register_tokens: false
+        force_keep_self_view_tokens: false
+        objective_value_gate_enabled: false
+        objective_value_gate_scale: 0.0
+        objective_value_gate_tau: 1.0
+        objective_value_gate_eps: 1.0e-6
+        objective_value_gate_query_chunk_size: 64
+        init_from_attn: true
+
+loss:
+    train_loss: 
+        _target_: pi3.models.loss.Pi3Loss
+        train_conf: false
+        normal_loss_weight: 1.0
+
+    test_loss:
+        _target_: pi3.models.loss.Pi3Loss
+        train_conf: false
+        normal_loss_weight: 1.0
+
+train:
+    num_workers: 16
+    batch_size: 1              # not use, dynamic batch size
+    num_epoch: 80
+    iters_per_epoch: 1000
+
+    print_freq: 40
+    base_seed: 666
+
+    model_dtype: bf16
+    # dynamic complie
+    dynamo_backend: NO  # CUDAGRAPHS  # INDUCTOR  # NO
+    dynamic_compile: true
+
+    # Training config
+    gradient_accumulation_steps: 1
+    clip_grad: 1.0
+    clip_grad_separate_indexer: false
+    clip_indexer_grad: null
+    clip_loss: 10
+    
+    seed: 42
+    resume: null
+    auto_resume: true
+    start_epoch: 0
+    global_step: 0
+    world_size: 1
+    rank: -1
+    gpu: -1
+    dist_on_itp: false
+    find_unused_parameters: false
+
+    # for distributed training
+    distributed: false
+    dist_url: env://
+    dist_backend: "nccl"
+
+    # Optimizer config
+    optimizer:
+        type: AdamW
+        lr: 5e-5
+        weight_decay: 5e-2
+        betas: [0.9, 0.95]
+        verbose: true
+        filter_bias_and_bn: true
+
+        encoder_lr: 5e-6
+
+    lr_scheduler:
+        type: OneCycleLR
+        max_lr: ${train.optimizer.lr}
+        pct_start: 0.0
+        anneal_strategy: cos
+        div_factor: 1000.0
+        final_div_factor: 100.0
+        total_steps: -1
+
+test:
+    num_workers: 16              # 16
+    batch_size: 1              # not use, dynamic batch size
+    image_num_range: [8, 8]
+    print_freq: 10
+    iters_per_test: -1
+    eval_interval: 1
+    before_first_epoch: false
+    vggt_style_metrics:
+        enabled: false
+        compute_cam: true
+        compute_dpt: true
+        compute_xyz: true
+        max_points_per_view: 65536

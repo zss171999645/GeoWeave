@@ -1,0 +1,101 @@
+# ft业务行车数据 ablation结论 https://horizonrobotics.feishu.cn/wiki/Vm9IwO7iVivRCNkk6bjc5APCnHd#K311dPP8LodtYtxCfeZcRaeUnqf
+# 1. pose-weight x5：pose-auc-01提升一个点左右，depth无影响；
+# 2. aug：增加aug对pose和depth均有提升；当前v4版本收益待确认；
+# 3. scaleup x4：pose-auc-01提升2.2个点，depth提升4.3个点；还能进一步scaleup；
+# 4. lr：2x8卡 lr设为1e-5，相较于5e-6 pose-auc-01提升1.4个点，depth提升2个点；
+# 5. vggtbatchsampler：影响不大，pose（translation）有略微收敛加速，depth基本无变化；
+
+# 收敛性质：
+# 1. 默认2x8卡，lr from 2e-5 to 1e-8，160k step：depth在100k左右停止收敛，pose在130k左右停止收敛；
+
+# 训练启动脚本
+# python aidi/submit.py --job_name bussiness_stage2_basemodel --cluster_name project-a800-4dlabel-perception2-bcloud --gpu 8 --node 8 --priority 4 'aidi/run.sh --config vggt/saturnv/base/vggt_mvsseq --exp_name exp/basemodel/1003/8x8_1e-4_stage2_resumebase --train --train_args "runner_cfg.resume=True model_cfg.sampler_cfg.load_pretrained=True model_cfg.supervisor_cfg.pose_loss_type=L1 runner_cfg.train_use_amp=True model_cfg.sampler_cfg.use_checkpoint=True " --multi_machine --dist'
+
+
+# FSDP: https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html
+fsdp_enabled: False
+runner_cfg:
+    gradient_accumulation_steps: 2
+    fsdp_shard_class_list: ['NestedTensorBlock', 'Block', 'DPTHead', 'CameraHead']
+    test_with_ddp_sharding: &test_with_ddp_sharding True
+
+    visualizer_cfg:
+        type: SequentialVisualizer
+        visualizer_cfgs: []
+        
+    evaluator_cfg:
+        type: GeometryEvaluator
+        compute_cam_metrics: ['CAM_ACC_AUC','CAM_EVO']
+        compute_dpt_metrics: ["DPT","DPT_TARGET"]
+        fixscale: True
+    
+    optimizer_cfg:
+        lr: 1.e-5 # default 8*8 with accumulation
+        eps: 1.e-8
+        weight_decay: 5.e-2
+        lr_table:
+            patch_embed: 2.e-6 # default 8*8 with accumulation
+        optimizer_cfg:
+            type: AdamW # most common in transformer models
+
+    scheduler_cfg:
+        type: WarmupCosineLR
+        warmup_iters: 0  # xy: add warmup
+
+    epochs: 160 # 160k by paper
+    ep_iter: 1000
+    save_latest_ep: 5  # xy: less to save time
+    save_ep: 5  # xy: less to save time
+    eval_ep: 5  # xy: less to save time
+    log_interval: 50
+    test_before_first_epoch: True
+    empty_cache_ep: 1 # eval_ep
+    
+
+model_cfg:
+    supervisor_cfg:
+        supervisor_cfgs:
+            - type: PoseSupervisor
+            - type: DepthSupervisor
+
+    sampler_cfg:
+        vggt_batching: False # use the custom VGGT batching
+        load_pretrained: False
+        use_cam_emb: True  # use camera embedding
+        # freeze_list: ["agg_regator", "xyz_decoder", "dpt_decoder"]  # for debug
+        use_3ddr: True
+        use_xyz_head: False
+
+        # vitsmall
+        dinov2_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vits14_reg4_pretrain.pth
+        agg_regator_cfg:
+            patch_embed: dinov2_vits14_reg
+            img_size: 518
+            patch_size: 14
+            embed_dim: &embed_dim 384
+            intermediate_layer_idx: &intermediate_layer_idx [2, 5, 8, 11]
+            num_heads: 6
+            depth: 12
+
+        cam_embed_cfg:
+            type: CamMlp
+            in_features: 10
+            hidden_features: *embed_dim
+            out_features: 1536 # embed_dim*4
+
+        cam_decoder_cfg:
+            dim_in: 768 # embed_dim*2
+
+        # xyz_decoder_cfg:
+        #     dim_in: 768 # embed_dim*2
+        #     output_dim: 4
+        #     activation: inv_log
+        #     conf_activation: expp1
+        #     intermediate_layer_idx: *intermediate_layer_idx
+
+        dpt_decoder_cfg:
+            dim_in: 768 # embed_dim*2
+            output_dim: 2
+            activation: exp
+            conf_activation: expp1
+            intermediate_layer_idx: *intermediate_layer_idx

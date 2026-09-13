@@ -1,0 +1,364 @@
+cluster: project-l20-4dlabel-perception-acloud
+
+infer_sets: 
+  - driving_rainy
+  - driving_sunny
+  - driving_snow
+  - driving_cloudy
+  - parking_outdoor_bright
+  - parking_outdoor_dark
+  - parking_indoor_bright
+  - parking_indoor_normal
+  - parking_indoor_dark
+
+
+driving_cloudy:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/driving_cloudy/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_pandar_b_c_20251112_220504  
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_cloudy_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    # - sfm_sitename,pandar_sitename
+    - DZ878/20240822_D/garage__1724261494000__0,DZ878/20240822_D/garage__1724261494000__0
+    - DZ878/20240822_D/garage__1724296526000__1,DZ878/20240822_D/garage__1724296526000__1
+    - DZ878/20240822_D/garage__1724294435000__2,DZ878/20240822_D/garage__1724294435000__2
+    - DZ878/20240822_D/garage__1724295299000__3,DZ878/20240822_D/garage__1724295299000__3
+    - DZ878/20240822_D/garage__1724309034000__4,DZ878/20240822_D/garage__1724309034000__4
+    - DZ878/20240820_D/garage__1724160205000__5,DZ878/20240820_D/garage__1724160205000__5
+    - DZ878/20240822_D/garage__1724298667000__6,DZ878/20240822_D/garage__1724298667000__6
+    - DZ878/20240820_D/garage__1724132918000__7,DZ878/20240820_D/garage__1724132918000__7
+    - DZ878/20240820_D/garage__1724164302000__8,DZ878/20240820_D/garage__1724164302000__8
+    - DZ878/20240820_D/garage__1724161518000__9,DZ878/20240820_D/garage__1724161518000__9
+    - DZ878/20240820_D/garage__1724161846000__10,DZ878/20240820_D/garage__1724161846000__10
+    - DZ878/20240822_D/garage__1724263642000__11,DZ878/20240822_D/garage__1724263642000__11
+    - DZ878/20240820_D/garage__1724156546000__12,DZ878/20240820_D/garage__1724156546000__12
+    - DZ878/20240822_D/garage__1724286774000__13,DZ878/20240822_D/garage__1724286774000__13
+    - DZ878/20240822_D/garage__1724289455000__14,DZ878/20240822_D/garage__1724289455000__14
+    - DZ878/20240820_D/garage__1724136588000__15,DZ878/20240820_D/garage__1724136588000__15
+    - DZ878/20240820_D/garage__1724144551000__16,DZ878/20240820_D/garage__1724144551000__16
+    - DZ878/20240820_D/garage__1724165958000__17,DZ878/20240820_D/garage__1724165958000__17
+    - DZ878/20240822_D/garage__1724256440000__18,DZ878/20240822_D/garage__1724256440000__18
+    - DZ878/20240822_D/garage__1724264461000__19,DZ878/20240822_D/garage__1724264461000__19
+    - DZ878/20240820_D/garage__1724084896000__20,DZ878/20240820_D/garage__1724084896000__20
+    - DZ878/20240820_D/garage__1724142677000__21,DZ878/20240820_D/garage__1724142677000__21
+    - DZ878/20240820_D/garage__1724089261000__22,DZ878/20240820_D/garage__1724089261000__22
+    - DZ878/20240822_D/garage__1724287088000__23,DZ878/20240822_D/garage__1724287088000__23
+    - DZ878/20240824_D/garage__1724440699000__24,DZ878/20240824_D/garage__1724440699000__24
+    - DZ878/20240820_D/garage__1724096074000__25,DZ878/20240820_D/garage__1724096074000__25
+    - DZ878/20240820_D/garage__1724136836000__26,DZ878/20240820_D/garage__1724136836000__26
+    - DZ878/20240822_D/garage__1724289174000__27,DZ878/20240822_D/garage__1724289174000__27
+    - DZ878/20240820_D/garage__1724089124000__28,DZ878/20240820_D/garage__1724089124000__28
+    - DZ878/20240820_D/garage__1724142141000__29,DZ878/20240820_D/garage__1724142141000__29
+    - DZ878/20240820_D/garage__1724090029000__30,DZ878/20240820_D/garage__1724090029000__30
+    - DZ878/20240820_D/garage__1724167527000__31,DZ878/20240820_D/garage__1724167527000__31
+    - DZ878/20240820_D/garage__1724083547000__32,DZ878/20240820_D/garage__1724083547000__32
+    - DZ878/20240820_D/garage__1724084777000__33,DZ878/20240820_D/garage__1724084777000__33
+    - DZ878/20240828_D/garage__1724776982000__34,DZ878/20240828_D/garage__1724776982000__34
+    - DZ878/20240828_D/garage__1724850202000__35,DZ878/20240828_D/garage__1724850202000__35
+    - DZ878/20240820_D/garage__1724087319000__36,DZ878/20240820_D/garage__1724087319000__36
+    - DZ878/20240820_D/garage__1724138376000__37,DZ878/20240820_D/garage__1724138376000__37
+    - DZ878/20240822_D/garage__1724258164000__38,DZ878/20240822_D/garage__1724258164000__38
+    - DZ878/20240824_D/garage__1724483304000__39,DZ878/20240824_D/garage__1724483304000__39
+    - DZ776/20240822_D/garage__1724298193000__40,DZ776/20240822_D/garage__1724298193000__40
+    - DZ878/20240828_D/garage__1724811797000__41,DZ878/20240828_D/garage__1724811797000__41
+    - DZ776/20240822_D/garage__1724303560000__42,DZ776/20240822_D/garage__1724303560000__42
+    - DZ776/20240820_D/garage__1724137655000__43,DZ776/20240820_D/garage__1724137655000__43
+    - DZ776/20240820_D/garage__1724142459000__44,DZ776/20240820_D/garage__1724142459000__44
+    - DZ776/20240824_D/garage__1724441070000__45,DZ776/20240824_D/garage__1724441070000__45
+    - DZ776/20240824_D/garage__1724443182000__46,DZ776/20240824_D/garage__1724443182000__46
+    - DZ776/20240824_D/garage__1724464237000__47,DZ776/20240824_D/garage__1724464237000__47
+    - DZ776/20240824_D/garage__1724463860000__48,DZ776/20240824_D/garage__1724463860000__48
+    - DZ776/20240824_D/garage__1724467010000__49,DZ776/20240824_D/garage__1724467010000__49
+    - DZ776/20240824_D/garage__1724463867000__50,DZ776/20240824_D/garage__1724463867000__50
+    - DZ776/20240824_D/garage__1724465641000__51,DZ776/20240824_D/garage__1724465641000__51
+    - DZ776/20240824_D/garage__1724473599000__52,DZ776/20240824_D/garage__1724473599000__52
+    - DZ776/20240820_D/garage__1724152752000__53,DZ776/20240820_D/garage__1724152752000__53
+    - DZ776/20240824_D/garage__1724474226000__54,DZ776/20240824_D/garage__1724474226000__54
+
+
+driving_rainy:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/driving_rainy/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_pandar_b_c_20251112_220504  
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_rainy_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ878/20240820_D/garage__1724135765000__0,DZ878/20240820_D/garage__1724135765000__55
+    - DZ878/20240820_D/garage__1724146813000__1,DZ878/20240820_D/garage__1724146813000__56
+    - DZ878/20240820_D/garage__1724162419000__2,DZ878/20240820_D/garage__1724162419000__57
+    - DZ878/20240820_D/garage__1724157003000__3,DZ878/20240820_D/garage__1724157003000__58
+    - DZ878/20240820_D/garage__1724163566000__4,DZ878/20240820_D/garage__1724163566000__59
+    - DZ878/20240820_D/garage__1724165543000__5,DZ878/20240820_D/garage__1724165543000__60
+    - DZ878/20240820_D/garage__1724135847000__6,DZ878/20240820_D/garage__1724135847000__61
+    - DZ878/20240820_D/garage__1724158913000__7,DZ878/20240820_D/garage__1724158913000__62
+    - DZ776/20240815_D/garage__1723683409000__8,DZ776/20240815_D/garage__1723683409000__63
+    - DZ878/20240815_D/garage__1723694740000__9,DZ878/20240815_D/garage__1723694740000__64
+    - DZ878/20240817_D/garage__1723862000000__10,DZ878/20240817_D/garage__1723862000000__65
+    - DZ878/20240815_D/garage__1723664859000__11,DZ878/20240815_D/garage__1723664859000__66
+    - DZ878/20240815_D/garage__1723698010000__12,DZ878/20240815_D/garage__1723698010000__67
+    - DZ878/20240817_D/garage__1723860574000__13,DZ878/20240817_D/garage__1723860574000__68
+    - DZ878/20240817_D/garage__1723905526000__14,DZ878/20240817_D/garage__1723905526000__69
+    - DZ878/20240815_D/garage__1723699194000__15,DZ878/20240815_D/garage__1723699194000__70
+    - DZ878/20240817_D/garage__1723872176000__16,DZ878/20240817_D/garage__1723872176000__71
+    - DZ878/20240815_D/garage__1723694332000__17,DZ878/20240815_D/garage__1723694332000__72
+    - DZ878/20240815_D/garage__1723703167000__18,DZ878/20240815_D/garage__1723703167000__73
+    - DZ878/20240817_D/garage__1723873379000__19,DZ878/20240817_D/garage__1723873379000__74
+    - DZ878/20240817_D/garage__1723899480000__20,DZ878/20240817_D/garage__1723899480000__75
+    - DZ878/20240817_D/garage__1723878535000__21,DZ878/20240817_D/garage__1723878535000__76
+    - DZ878/20240817_D/garage__1723881419000__22,DZ878/20240817_D/garage__1723881419000__77
+    - DZ878/20240815_D/garage__1723688909000__23,DZ878/20240815_D/garage__1723688909000__78
+    - DZ878/20240815_D/garage__1723711282000__24,DZ878/20240815_D/garage__1723711282000__79
+    - DZ878/20240817_D/garage__1723910104000__25,DZ878/20240817_D/garage__1723910104000__80
+    - DZ878/20240815_D/garage__1723691486000__26,DZ878/20240815_D/garage__1723691486000__81
+    - DZ878/20240815_D/garage__1723705732000__27,DZ878/20240815_D/garage__1723705732000__82
+    - DZ878/20240815_D/garage__1723704708000__28,DZ878/20240815_D/garage__1723704708000__83
+    - DZ878/20240815_D/garage__1723707826000__29,DZ878/20240815_D/garage__1723707826000__84
+
+
+driving_sunny:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/driving_sunny/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_pandar_b_c_20251112_220504  
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_sunny_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ136/20240826_D/garage__1724676723000__0,DZ136/20240826_D/garage__1724676723000__108
+    - DZ136/20240827_D/garage__1724713174000__1,DZ136/20240827_D/garage__1724713174000__109
+    - DZ136/20240827_D/garage__1724711511000__2,DZ136/20240827_D/garage__1724711511000__110
+    - DZ136/20240826_D/garage__1724685481000__3,DZ136/20240826_D/garage__1724685481000__111
+    - DZ136/20240826_D/garage__1724644211000__4,DZ136/20240826_D/garage__1724644211000__112
+    - DZ136/20240826_D/garage__1724675964000__5,DZ136/20240826_D/garage__1724675964000__113
+    - DZ136/20240827_D/garage__1724713912000__6,DZ136/20240827_D/garage__1724713912000__114
+    - DZ136/20240828_D/garage__1724824441000__7,DZ136/20240828_D/garage__1724824441000__115
+    - DZ136/20240826_D/garage__1724685363000__8,DZ136/20240826_D/garage__1724685363000__116
+    - DZ136/20240828_D/garage__1724824516000__9,DZ136/20240828_D/garage__1724824516000__117
+    - DZ136/20240831_D/garage__1725067029000__10,DZ136/20240831_D/garage__1725067029000__118
+    - DZ136/20240831_D/garage__1725061627000__11,DZ136/20240831_D/garage__1725061627000__119
+    - DZ136/20240831_D/garage__1725069980000__12,DZ136/20240831_D/garage__1725069980000__120
+    - DZ136/20240831_D/garage__1725069622000__13,DZ136/20240831_D/garage__1725069622000__121
+    - DZ136/20240828_D/garage__1724816194000__14,DZ136/20240828_D/garage__1724816194000__122
+    - DZ136/20240830_D/garage__1725030321000__15,DZ136/20240830_D/garage__1725030321000__123
+    - DZ136/20240831_D/garage__1725038043000__16,DZ136/20240831_D/garage__1725038043000__124
+    - DZ136/20240826_D/garage__1724628494000__17,DZ136/20240826_D/garage__1724628494000__125
+    - DZ136/20240826_D/garage__1724660310000__18,DZ136/20240826_D/garage__1724660310000__126
+    - DZ136/20240826_D/garage__1724629655000__19,DZ136/20240826_D/garage__1724629655000__127
+    - DZ136/20240826_D/garage__1724628887000__20,DZ136/20240826_D/garage__1724628887000__128
+    - DZ136/20240826_D/garage__1724644443000__21,DZ136/20240826_D/garage__1724644443000__129
+    - DZ136/20240826_D/garage__1724637117000__22,DZ136/20240826_D/garage__1724637117000__130
+    - DZ136/20240830_D/garage__1725005537000__23,DZ136/20240830_D/garage__1725005537000__131
+    - DZ136/20240830_D/garage__1725024282000__24,DZ136/20240830_D/garage__1725024282000__132
+    - DZ136/20240830_D/garage__1725027655000__25,DZ136/20240830_D/garage__1725027655000__133
+    - DZ136/20240831_D/garage__1725065230000__26,DZ136/20240831_D/garage__1725065230000__134
+    - DZ136/20240831_D/garage__1725072305000__27,DZ136/20240831_D/garage__1725072305000__135
+    - DZ136/20240830_D/garage__1725015533000__28,DZ136/20240830_D/garage__1725015533000__136
+    - DZ136/20240830_D/garage__1725025505000__29,DZ136/20240830_D/garage__1725025505000__137
+    - DZ136/20240830_D/garage__1725028302000__30,DZ136/20240830_D/garage__1725028302000__138
+    - DZ136/20240831_D/garage__1725053491000__31,DZ136/20240831_D/garage__1725053491000__139
+    - DZ136/20240826_D/garage__1724629304000__32,DZ136/20240826_D/garage__1724629304000__140
+    - DZ136/20240826_D/garage__1724629917000__33,DZ136/20240826_D/garage__1724629917000__141
+    - DZ136/20240830_D/garage__1725026278000__34,DZ136/20240830_D/garage__1725026278000__142
+    - DZ136/20240831_D/garage__1725065465000__35,DZ136/20240831_D/garage__1725065465000__143
+    - DZ136/20240830_D/garage__1725025208000__36,DZ136/20240830_D/garage__1725025208000__144
+    - DZ136/20240830_D/garage__1725027834000__37,DZ136/20240830_D/garage__1725027834000__145
+    - DZ136/20240826_D/garage__1724628860000__38,DZ136/20240826_D/garage__1724628860000__146
+    - DZ136/20240826_D/garage__1724644480000__39,DZ136/20240826_D/garage__1724644480000__147
+    - DZ136/20240830_D/garage__1725030656000__40,DZ136/20240830_D/garage__1725030656000__148
+    - DZ136/20240826_D/garage__1724641397000__41,DZ136/20240826_D/garage__1724641397000__149
+    - DZ136/20240830_D/garage__1725026901000__42,DZ136/20240830_D/garage__1725026901000__150
+    - DZ136/20240831_D/garage__1725082348000__43,DZ136/20240831_D/garage__1725082348000__151
+    - DZ136/20240830_D/garage__1725023407000__44,DZ136/20240830_D/garage__1725023407000__152
+    - DZ136/20240830_D/garage__1725028230000__45,DZ136/20240830_D/garage__1725028230000__153
+    - DZ136/20240831_D/garage__1725082356000__46,DZ136/20240831_D/garage__1725082356000__154
+    - DZ136/20240830_D/garage__1725005774000__47,DZ136/20240830_D/garage__1725005774000__155
+    - DZ136/20240826_D/garage__1724659371000__48,DZ136/20240826_D/garage__1724659371000__156
+    - DZ136/20240830_D/garage__1725014637000__49,DZ136/20240830_D/garage__1725014637000__157
+    - DZ136/20240830_D/garage__1725016612000__50,DZ136/20240830_D/garage__1725016612000__158
+    - DZ136/20240826_D/garage__1724642187000__51,DZ136/20240826_D/garage__1724642187000__159
+    - DZ136/20240830_D/garage__1725014796000__52,DZ136/20240830_D/garage__1725014796000__160
+    - DZ136/20240826_D/garage__1724659324000__53,DZ136/20240826_D/garage__1724659324000__161
+    - DZ136/20240826_D/garage__1724674441000__54,DZ136/20240826_D/garage__1724674441000__162
+    - DZ136/20240830_D/garage__1725014652000__55,DZ136/20240830_D/garage__1725014652000__163
+    - DZ136/20240830_D/garage__1725023312000__56,DZ136/20240830_D/garage__1725023312000__164
+    - DZ136/20240831_D/garage__1725038278000__57,DZ136/20240831_D/garage__1725038278000__165
+    - DZ136/20240831_D/garage__1725053261000__58,DZ136/20240831_D/garage__1725053261000__166
+    - DZ136/20240826_D/garage__1724640290000__59,DZ136/20240826_D/garage__1724640290000__167
+    - DZ136/20240830_D/garage__1725016163000__60,DZ136/20240830_D/garage__1725016163000__168
+    - DZ136/20240830_D/garage__1725016605000__61,DZ136/20240830_D/garage__1725016605000__169
+
+
+driving_snow:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/driving_snow/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_pandar_b_c_20251112_220504  
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_snowyday_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ136/20240221_D/garage__1708481478000__0,DZ136/20240221_D/garage__1708481478000__85
+    - DZ562/20240220_D/garage__1708401346000__1,DZ562/20240220_D/garage__1708401346000__86
+    - DZ136/20240221_D/garage__1708484819000__2,DZ136/20240221_D/garage__1708484819000__87
+    - DZ136/20240305_D/garage__1709611738000__3,DZ136/20240305_D/garage__1709611738000__88
+    - DZ562/20240305_D/garage__1709644379000__4,DZ562/20240305_D/garage__1709644379000__89
+    - DZ562/20240220_D/garage__1708439823000__5,DZ562/20240220_D/garage__1708439823000__90
+    - DZ136/20240221_D/garage__1708479674000__6,DZ136/20240221_D/garage__1708479674000__91
+    - DZ562/20240220_D/garage__1708397928000__7,DZ562/20240220_D/garage__1708397928000__92
+    - DZ136/20240221_D/garage__1708487727000__8,DZ136/20240221_D/garage__1708487727000__93
+    - DZ562/20240305_D/garage__1709648619000__9,DZ562/20240305_D/garage__1709648619000__94
+    - DZ136/20240220_D/garage__1708412123000__10,DZ136/20240220_D/garage__1708412123000__95
+    - DZ136/20240221_D/garage__1708473835000__11,DZ136/20240221_D/garage__1708473835000__96
+    - DZ136/20240305_D/garage__1709634201000__12,DZ136/20240305_D/garage__1709634201000__97
+    - DZ136/20240220_D/garage__1708415169000__13,DZ136/20240220_D/garage__1708415169000__98
+    - DZ136/20240220_D/garage__1708432358000__14,DZ136/20240220_D/garage__1708432358000__99
+    - DZ136/20240220_D/garage__1708421077000__15,DZ136/20240220_D/garage__1708421077000__100
+    - DZ136/20240221_D/garage__1708521938000__16,DZ136/20240221_D/garage__1708521938000__101
+    - DZ136/20240221_D/garage__1708528160000__17,DZ136/20240221_D/garage__1708528160000__102
+    - DZ136/20240305_D/garage__1709602493000__18,DZ136/20240305_D/garage__1709602493000__103
+    - DZ136/20240221_D/garage__1708501849000__19,DZ136/20240221_D/garage__1708501849000__104
+    - DZ136/20240305_D/garage__1709593835000__20,DZ136/20240305_D/garage__1709593835000__105
+    - DZ136/20240220_D/garage__1708403709000__21,DZ136/20240220_D/garage__1708403709000__106
+    - DZ136/20240221_D/garage__1708501683000__22,DZ136/20240221_D/garage__1708501683000__107
+
+
+parking_outdoor_bright:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/parking_outdoor_bright/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/parking_pandar_b_c_20251112_220504
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_outdoor_bright_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ989/20250415_D/garage__1744677595197__0,DZ989/20250415_D/garage__1744677595197__16
+    - DZ970/20250324_D/garage__1742791804255__1,DZ970/20250324_D/garage__1742791804255__17
+    - DZ002/20250612_D/garage__1749676388781__2,DZ002/20250612_D/garage__1749676388781__18
+    - DZ878/20250315_D/garage__1742028006000__3,DZ878/20250315_D/garage__1742028006000__19
+    - DZ2911/20250715_D/garage__1752573693000__4,DZ2911/20250715_D/garage__1752573693000__20
+    - DZ035/20250315_D/garage__1742014160220__5,DZ035/20250315_D/garage__1742014160220__21
+
+
+parking_outdoor_dark:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/parking_outdoor_dark/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/parking_pandar_b_c_20251112_220504
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_outdoor_dark_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ701/20250613_D/garage__1749744400000__0,DZ701/20250613_D/garage__1749744400000__22
+    - DZ660/20250612_D/garage__1749728354431__1,DZ660/20250612_D/garage__1749728354431__23
+    - DZ701/20250711_D/garage__1752235937000__2,DZ701/20250711_D/garage__1752235937000__24
+    - DZ989/20250124_D/garage__1737661612349__3,DZ989/20250124_D/garage__1737661612349__25
+    - DZ701/20250614_D/garage__1749905627000__4,DZ701/20250614_D/garage__1749905627000__26
+
+
+parking_indoor_bright:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/parking_indoor_bright/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/parking_pandar_b_c_20251112_220504
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_indoor_bright_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ580/20250710_D/garage__1752156610000__0,DZ580/20250710_D/garage__1752156610000__0
+    - DZ580/20250716_D/garage__1752656453000__1,DZ580/20250716_D/garage__1752656453000__1
+    - DZ727/20250426_D/garage__1745670745707__2,DZ727/20250426_D/garage__1745670745707__2
+
+
+parking_indoor_normal:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/parking_indoor_normal/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/parking_pandar_b_c_20251112_220504
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_indoor_normal_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ035/20240814_D/garage__1723606330000__0,DZ035/20240814_D/garage__1723606330000__4
+    - DZ937/20250612_D/garage__1749725718000__1,DZ937/20250612_D/garage__1749725718000__5
+    - DZ2226/20250711_D/garage__1752202966000__2,DZ2226/20250711_D/garage__1752202966000__6
+    - DZ768/20250701_D/garage__1751333581500__3,DZ768/20250701_D/garage__1751333581500__7
+    - DZ907/20250430_D/garage__1745975457086__4,DZ907/20250430_D/garage__1745975457086__8
+    - DZ937/20250320_D/garage__1742482695240__5,DZ937/20250320_D/garage__1742482695240__9
+    - DZ727/20250421_D/garage__1745246253718__6,DZ727/20250421_D/garage__1745246253718__10
+    - DZ002/20250616_D/garage__1750062038000__7,DZ002/20250616_D/garage__1750062038000__11
+    - DZ002/20250616_D/garage__1750068636078__8,DZ002/20250616_D/garage__1750068636078__12
+    - DZ055/20250612_D/garage__1749721822993__9,DZ055/20250612_D/garage__1749721822993__13
+    - DZ002/20250715_D/garage__1752546472000__10,DZ002/20250715_D/garage__1752546472000__14
+    - DZ970/20240823_D/garage__1724401990114__11,DZ970/20240823_D/garage__1724401990114__15
+
+
+parking_indoor_dark:
+  save_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/vggt_test/1115/stage2_no2_fixeval_1036P_win6/parking_indoor_dark/6v
+  weight_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_vggt/exp_results/trained_model/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/latest.pt
+  config_path: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/001_users/zhilei.chen/workspace_mvs/dropped_data/vggt_tboard_20251105/20251105_h20_8n8g_1036p_12nv_ropescaling0.5_lr1e-5_20kstep_resume-no2/1762332896.yaml
+  weight_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yukai.lin/projects/vggt/trained_model/exp/smallmodel/1103/A800_3x8_vggt_alldata_2e-5_stage2_resume_vitlarge_loop_closure_finetune_80k/159.pt
+  config_path_lc: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/record/exp/basemodel/extrapool/8x4_2e-5_stage2_resumeno3_chunkdptbp_src63_extrapool31/1763423090.yaml
+  pandar_gtpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/parking_pandar_b_c_20251112_220504
+  site_rootpath: /horizon-bucket/perception-dataprocess/4dlabel/static_visual/users/qingfeng.li/visual_test/pack_list_mode/output/driving_parking_indoor_dark_20251112_220504
+  gt_type: pandar
+  add_loop_closure: False
+  save_pointcloud: False
+  use_cam_emb: True
+  mvseq: True
+  sensors: 6v
+  sites:
+    - DZ002/20250609_D/garage__1749432546000__0,DZ002/20250609_D/garage__1749432546000__3
+

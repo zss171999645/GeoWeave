@@ -1,0 +1,62 @@
+extends: eval_20260508_four_baselines_all_tasks_base.yaml
+
+run:
+  name: pi3_sparse65_rerun_all_tasks_20260508
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260508_pi3_sparse65_rerun_all_tasks
+  skip_existing: true
+  continue_on_error: true
+  allow_co3dv2_videodepth: false
+  env:
+    PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True
+    VGGT_INDEXER_TOPK_OUTER_QUERY_CHUNK: "8192"
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/record/pi3/native_sparse/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/outputs/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/protected_ckpts/checkpoint_65_keep_20260508/pytorch_model.bin
+  pi3_config: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/record/pi3/native_sparse/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/outputs/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/.hydra/config.yaml
+  pi3_model_impl: native_sparse
+  pi3_native_root: aidi/third_party/pi3_training
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  sintel:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  bonn:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  kitti:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  eth3d:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  7scenes:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  blendedmvs:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  mvs_synth:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  scannetpp:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  vkitti2:
+    depth:
+      videodepth:
+        max_frames_per_seq: 50
+  co3dv2:
+    depth:
+      videodepth:
+        enabled: false
+        max_frames_per_seq: 50

@@ -1,0 +1,89 @@
+# Align with VGGT data sampling strategy
+# 1. Handle the `batch_size * n_srcs` sampling in the `VGGTBatchSampler` (Batch Sampler)
+# 2. Different sampled data for each batch now comes from different dataset and different scene based on the `SegmentProbabilitySampler`
+# 3. Discard the `VGGTDataset` since it samples `batch_size` data from the same scene
+
+runner_cfg:
+    test_with_ddp_sharding: True  # used with DistributedSequentialSampler
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: False # no need of this, since we've handled the batching in the `VGGTBatchSampler`
+
+dataloader_cfg:
+    sampler_cfg:
+        type: SegmentProbabilitySampler
+        fix_random: False
+    batch_sampler_cfg: &batch_sampler_cfg
+        _delete_: True
+        type: VGGTBatchSampler
+        batch_size: 1 # no actual effect, since we've handled the batching in the `VGGTBatchSampler`
+        n_srcs_list: &train_n_srcs_list [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23
+        ]
+        n_srcs_prob: &train_n_srcs_probs [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ]
+        aspect_ratio_range: [0.33, 1.0] # random aspect ratio range
+        n_frames_batch: 24
+        inside_random: False # already handled by the SegmentProbabilitySampler
+        fix_random_n_srcs: True # for faster synchronization, maybe turn this off?
+        fix_random_aspect: True # must be fixed for faster synchronization
+
+val_dataloader_cfg:
+    sampler_cfg:
+        type: DistributedSequentialSampler
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+    batch_sampler_cfg:
+        _delete_: True
+        type: ImageBasedBatchSampler  # old deprecated sampler
+        batch_size: 1 # test always on batch size 1
+        n_srcs_list: [7]
+        n_srcs_prob: [1.0]
+        fix_random: True # fix the random seed faster training
+        aspect_ratio_range: -1

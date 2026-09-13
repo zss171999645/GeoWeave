@@ -1,0 +1,10 @@
+# Configuration for VGGT
+configs:
+    - configs/exps/vggt/vggt.yaml
+
+runner_cfg:
+    resume: True
+
+model_cfg:
+  sampler_cfg:
+    load_pretrained: False

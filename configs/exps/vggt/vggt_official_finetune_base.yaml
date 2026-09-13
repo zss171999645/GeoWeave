@@ -1,0 +1,6 @@
+# Official VGGT finetune base config (shared includes)
+configs:
+  - configs/base.yaml
+  - configs/models/vggt_sample.yaml
+  - configs/models/vggt_official.yaml
+  - configs/models/vggt_official_finetune.yaml

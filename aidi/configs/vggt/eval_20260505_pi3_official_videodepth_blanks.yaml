@@ -1,0 +1,53 @@
+run:
+  name: pi3_official_videodepth_blanks_20260505
+  gpu_ids: "2,3,4,7"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_pi3_official_remaining/depth_videodepth_blanks
+  skip_existing: false
+  continue_on_error: true
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/pretrained/pi3/yyfz233_Pi3_model.safetensors
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  7scenes:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+
+  blendedmvs:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/test
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+
+  scannetpp:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+
+  vkitti2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/vkitti2_resolved
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+
+  co3dv2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/co3dv2/test
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0

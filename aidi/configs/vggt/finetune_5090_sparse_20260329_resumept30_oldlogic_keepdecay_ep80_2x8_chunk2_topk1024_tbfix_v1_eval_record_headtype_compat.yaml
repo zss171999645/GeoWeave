@@ -1,0 +1,16 @@
+_base_: ./finetune_5090_sparse_20260329_resumept30_oldlogic_keepdecay_ep80_2x8_chunk2_topk1024_tbfix_v1_eval_record.yaml
+
+model_cfg:
+    vggt_cfg:
+        depth_head_cfg:
+            type: DPTHeadWithChunkwiseBP
+            chunk_cfg:
+                batch_chunk_size: 1
+                enabled: true
+                frames_chunk_size: 2
+        point_head_cfg:
+            type: DPTHeadWithChunkwiseBP
+            chunk_cfg:
+                batch_chunk_size: 1
+                enabled: true
+                frames_chunk_size: 2

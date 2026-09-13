@@ -1,0 +1,74 @@
+# VGGT horizon_simu100h finetune from the business 2000hv2 checkpoint.
+configs:
+  - configs/base.yaml
+  - configs/models/vggt.yaml
+  - configs/models/vggt_sample.yaml
+  - configs/datasets/saturnv_horizon_simu100h_20260424.yaml
+
+fsdp_enabled: False
+
+runner_cfg:
+  resume: False
+  pretrained_model: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/vggt/finetune_model/basemodel/datascaleup/8x8_2e-5_resumebalancedatano1_2000hv2_use_dptpose_asxyz_liogt/clean.pt
+  pretrained_model_ext: .pt
+  pretrained_load_training_state: False
+  strict: False
+  gradient_accumulation_steps: 1
+  fsdp_shard_class_list: ["NestedTensorBlock", "Block", "DPTHead", "CameraHead"]
+  test_with_ddp_sharding: True
+  train_use_amp: True
+  record_images_to_tb: False
+  visualizer_cfg:
+    type: SequentialVisualizer
+    visualizer_cfgs: []
+  evaluator_cfg:
+    type: GeometryEvaluator
+    compute_cam_metrics: ["CAM_ACC_AUC", "CAM_EVO"]
+    compute_dpt_metrics: ["DPT", "DPT_TARGET"]
+    compute_xyz_metrics: ["XYZ"]
+    fixscale: True
+  optimizer_cfg:
+    lr: 2.e-5
+    eps: 1.e-8
+    weight_decay: 5.e-2
+    lr_table:
+      patch_embed: 4.e-6
+    optimizer_cfg:
+      type: AdamW
+  scheduler_cfg:
+    type: WarmupCosineLR
+    warmup_iters: 5000
+  epochs: 80
+  ep_iter: 1000
+  save_latest_ep: 1
+  save_ep: 1
+  eval_ep: 1
+  log_interval: 10
+  test_before_first_epoch: True
+  empty_cache_ep: 1
+  main_val_cfgs:
+    - name: horizon_simu100h
+      cfg: configs/exps/vggt/saturnv/evaluation/vggt_horizon_simu100h_20260424.yaml
+    - name: business_2000hv2_standard75
+      cfg: configs/exps/vggt/saturnv/evaluation/vggt_business_2000hv2_standard75_lio.yaml
+
+model_cfg:
+  sampler_cfg:
+    vggt_batching: False
+    load_pretrained: False
+    dinov2_ckpt: null
+    use_cam_emb: True
+    use_3ddr: True
+    use_3ddr_ratio: 1.0
+    use_checkpoint: True
+    use_chunkwise_bp_dpt_decoder: True
+    use_chunkwise_checkpoint: True
+    use_xyz_head: False
+    use_dptpose_as_xyz: True
+    cam_embed_cfg:
+      type: CamMlp
+      in_features: 10
+      hidden_features: 1024
+      out_features: 4096
+
+exp_name: "{{fileBasenameNoExtension}}"

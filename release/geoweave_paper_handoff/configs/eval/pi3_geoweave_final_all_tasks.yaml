@@ -1,0 +1,11 @@
+extends: ../../../../aidi/configs/vggt/eval_20260512_pi3_sparse_depthgt_ckpt79_all_tasks.yaml
+
+run:
+  name: pi3_geoweave_checkpoint79_handoff_all_tasks
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/geoweave_paper_handoff_eval/pi3_geoweave_checkpoint79_all_tasks
+
+model:
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/geoweave_paper_handoff_20260602_final/pi3_geoweave_native_sparse_20260505_checkpoint_79/checkpoint_79/pytorch_model.bin
+  pi3_config: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/geoweave_paper_handoff_20260602_final/pi3_geoweave_native_sparse_20260505_checkpoint_79/config.yaml
+  pi3_model_impl: native_sparse
+  pi3_native_root: aidi/third_party/pi3_training

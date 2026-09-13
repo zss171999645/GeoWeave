@@ -1,0 +1,23 @@
+dataloader_cfg: &dataloader_cfg
+    dataset_cfg: &dataset_cfg
+        ratio: 0.4
+        interp_using_t: True
+        closest_using_t: True
+        use_depths: True # have ground truth depths
+        use_vhulls: False
+        dist_opt_K: False # no distortion for synthetic data
+
+        frame_sample: [0, null, 1] # one training, two testing
+        view_sample: [0, null, 1] # one training, two testing
+        
+        source_type: SEQUENTIAL # monocular video
+        depth_type: INVERSE
+        depth_near: 0.05
+        depth_far: 10000.0
+        depth_scale: 1.0
+
+
+val_dataloader_cfg:
+    <<: *dataloader_cfg
+    dataset_cfg:
+        <<: *dataset_cfg

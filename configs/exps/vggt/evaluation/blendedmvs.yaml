@@ -1,0 +1,62 @@
+# Fix the random seed and set deterministic behavior
+fix_random: True
+deterministic: True
+
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: True # use the custom VGGT batching
+
+val_dataloader_cfg:
+    num_workers: 0 # make fix_random and deterministic work
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        runtime_build: False
+        dataset_indexing: True
+        parallel_loading: True
+        dataloading_workers: 64
+        disk_dataset: True
+        fix_random: True
+        meta_roots:
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/test
+        metaset_cfgs:
+            # The unified ratio is only used for a placeholder
+            # The actual resolution is determined by the max_size, lazy resizing
+            - ratio: 1.0 # blendedmvs/test
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              n_rays: -1
+              max_size: 518 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              dist_opt_K: False # no distortion for synthetic data
+              use_depths: True # use ground truth depths
+              use_vhulls: False
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              source_type: DISTANCEROT
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              scale_type: DIST
+              n_srcs_list: [9]
+              n_srcs_prob: [1.0]
+    sampler_cfg:
+        # Need to set `runtime_build` to True here to make the sampler scene-wise,
+        # and we'll randomly sample a reference frame from the scene for evaluation,
+        # so it is important to set `fix_random` and `deterministic` to True.
+        view_sample: [0, null, 1]
+        # frame_sample: [0, null, 1] # evaluate all scenes
+        frame_sample: [0, null, 10] # fast evaluation on 1/10 scenes
+    batch_sampler_cfg:
+        n_srcs_list: [9]
+        n_srcs_prob: [1.0]
+
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

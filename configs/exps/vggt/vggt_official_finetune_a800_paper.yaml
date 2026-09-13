@@ -1,0 +1,432 @@
+# Official VGGT finetune config for A800 nodes
+# Includes ASE/ADT and sparse-only extra datasets; warmup script disables sparse-only datasets.
+# Memory knobs: configs/specs/vggt/official/memory_a800.yaml
+
+configs:
+  - configs/exps/vggt/vggt_official_finetune_base.yaml
+  - configs/specs/vggt/official/memory_a800.yaml
+
+# DDP warmup 只训练 indexer，其他参数未参与 loss 时需要允许 unused grads
+find_unused_parameters: True
+
+__temp_vars__:
+  dataset_cfg:
+    __base__: &base_dataset_cfg
+      type: MultiviewPointDataset
+      ddp_shard_dataset: False
+      dataloading_workers: 8
+      n_rays: -1
+      proc_max_size: 518
+      proc_align_size: 14
+      disk_dataset: True
+      dist_opt_K: False
+      use_depths: True
+      use_vhulls: False
+      view_sample: [0, null, 1]
+      frame_sample: [0, null, 1]
+      source_type: DISTANCEROT
+      min_depth_quantile: 0.0
+      max_depth_quantile: 1.0
+      scale_type: DIST
+      portrait_check: False
+      center_crop: True
+      limit_max_aspect_ratio_as_original_ratio: False
+      use_world_coord: True
+      # original: n_srcs_list: null
+      n_srcs_list: null
+      # original: n_srcs_prob: null
+      n_srcs_prob: null
+    train_dataset_cfg: &train_dataset_cfg
+      <<: *base_dataset_cfg
+      split: TRAIN
+      # finetune: aug_scale: 0.3
+      aug_scale: 0.2
+      aug_scale_ratio: 1.0
+      aug_image: True
+      aug_image_cfg:
+        color_jitter:
+          brightness: 0.5
+          contrast: 0.5
+          saturation: 0.5
+          hue: 0.1
+          p: 0.9
+        gray_scale: True
+        gau_blur: False
+      aug_image_cojit: True
+      aug_image_cojit_ratio: 0.3
+      extra_src_pool: 88
+    val_dataset_cfg: &val_dataset_cfg
+      <<: *base_dataset_cfg
+      split: VAL
+      extra_src_pool: 0
+  dataloader_defaults: &dataloader_defaults
+    num_workers: 8
+    pin_memory: False
+  sampling_cfg:
+    n_srcs_list: &full_n_srcs_list [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+    ]
+    n_srcs_prob: &full_n_srcs_prob [
+      1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+    ]
+  meta_roots: &meta_roots
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/train
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/val
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/replica_niceslam
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/tartanair
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/vkitti2
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/ase
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/adt
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/megadepth
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/taskonomy
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/wildrgbd/train
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/mapfree/train
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/co3dv2/train
+    - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/mapillary
+    - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/dl3dv
+
+
+runner_cfg:
+  test_with_ddp_sharding: True
+  # original (base): visualizer_cfg.type: VolumetricVideoVisualizer
+  visualizer_cfg:
+    type: SequentialVisualizer
+    visualizer_cfgs: []
+  # original (base): evaluator_cfg.type: VolumetricVideoEvaluator
+  evaluator_cfg:
+    type: GeometryEvaluator
+    compute_cam_metrics: ['CAM_ACC_AUC', 'CAM_EVO', 'CAM_ATE']
+    compute_dpt_metrics: ['DPT']
+    compute_xyz_metrics: ['XYZ']
+    add_loss_to_metrics: True
+  extra_eval_cfgs:
+    - configs/exps/vggt/evaluation/hypersim.yaml
+    - configs/exps/vggt/evaluation/blendedmvs.yaml
+    - configs/exps/vggt/evaluation/arkitscenes.yaml
+    - configs/exps/vggt/evaluation/eth3d.yaml
+    - configs/exps/vggt/evaluation/7scenes.yaml
+  extra_eval_every: 5
+  extra_eval_prefix: EVAL_EXTRA
+  extra_eval_record_images: False
+  extra_eval_use_ddp: True
+  # evaluator/visualizer are noop; keep val loop for sanity checks
+  eval_ep: 1
+  # official: checkpoint.save_freq: 5
+  save_ep: 1
+  save_latest_ep: 5
+  optimizer_cfg:
+    type: OfficialVGGTOoptimizer
+    optimizer_cfg:
+      # original: lr: 1.0e-4
+      lr: 5.0e-5
+      # finetune: weight_decay: 1.0e-2
+      weight_decay: 5.0e-2
+  scheduler_cfg:
+    type: OfficialVGGTScheduler
+    option_schedulers:
+      lr:
+        - scheduler:
+            type: CompositeParamScheduler
+            schedulers:
+              - type: LinearParamScheduler
+                # finetune: start_value: 1.0e-6
+                start_value: 1.0e-8
+                # original: end_value: 1.0e-4
+                end_value: 5.0e-5
+              - type: CosineParamScheduler
+                # original: start_value: 1.0e-4
+                start_value: 5.0e-5
+                # finetune: end_value: 1.0e-6
+                end_value: 1.0e-8
+            lengths: [0.05, 0.95]
+            interval_scaling: ['rescaled', 'rescaled']
+      weight_decay:
+        - scheduler:
+            type: ConstantParamScheduler
+            # finetune: value: 1.0e-2
+            value: 5.0e-2
+  # official: accum_steps: 2
+  gradient_accumulation_steps: 2
+  # official: train_use_amp: True
+  train_use_amp: True
+  # official: amp_dtype: bfloat16
+  amp_dtype: bfloat16
+  # original: epochs: 100
+  # finetune: epochs: 30
+  epochs: 80
+  test_before_first_epoch: False
+  # finetune: ep_iter: 400
+  ep_iter: 1000
+  # original: log_interval: 1
+  # finetune: log_interval: 10
+  log_interval: 10
+
+model_cfg:
+  vggt_cfg:
+    indexer_cfg:
+      n_heads: 4
+      topk: 512
+      force_keep_special_tokens: False
+      force_keep_self_view_tokens: False
+    memory_cfg:
+      # patch embed 按帧分块，降低多视角输入的峰值显存
+      patch_embed_chunk_size: 0
+      # 如环境可用则启用 xformers，未安装时会自动回退
+      use_xformers: True
+
+dataloader_cfg:
+  <<: *dataloader_defaults
+  batch_sampler_cfg:
+    type: VGGTBatchSampler
+    # original (vggt_sample): n_frames_batch: 24
+    # auto: max(n_srcs_list) + 1
+    n_frames_batch: null
+    # original (vggt_sample): n_srcs_list: [1..23]
+    n_srcs_list: *full_n_srcs_list
+    # original (vggt_sample): n_srcs_prob: all 1.0
+    n_srcs_prob: *full_n_srcs_prob
+    aspect_ratio_range: [0.3, 1.0]
+  dataset_cfg:
+    _delete_: True
+    type: GeneralizableDataset
+    split: TRAIN
+    runtime_build: True
+    delete_after_runtime_build: False
+    runtime_dataset_cache_size: 2
+    global_sharding: True
+    dataset_indexing: True
+    parallel_loading: True
+    dataloading_workers: 64
+    disk_dataset: True
+    meta_roots: *meta_roots
+    metaset_cfgs:
+      # Synthetic datasets
+      - dataset_name: "blendedmvs/train"
+        extra_src_pool: 36
+        prob: 1.0
+      - dataset_name: "hypersim/train"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 1.0
+      - dataset_name: "hypersim/val"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 0.2
+      - dataset_name: "GTAV_1080"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.95
+        ims_pattern: "{frame:06d}.png"
+        prob: 0.5
+      - dataset_name: "replica_niceslam"
+        prob: 0.05
+      - dataset_name: "tartanair"
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        ims_pattern: "{frame:06d}.png"
+        prob: 1.0
+      - dataset_name: "vkitti2"
+        source_type: RANDOM
+        interp_using_t: True
+        closest_using_t: True
+        nearby_sampling: True
+        nearby_expand_ratio: 8
+        nearby_allow_duplicate: True
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        extra_src_pool: 0
+        ims_pattern: "{frame:05d}.jpg"
+        mks_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.exr"
+        prob: 0.5
+      - dataset_name: "ase"
+        rot90: "clockwise"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.99
+        extra_src_pool: 88
+        prob: 1.0
+      - dataset_name: "adt"
+        rot90: "clockwise"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 1.0
+        interp_using_t: True
+        closest_using_t: True
+        prob: 0.25
+      - dataset_name: "megadepth"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        prob: 0.25
+      - dataset_name: "scannetpp"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        extra_src_pool: 116
+        prob: 1.0
+      - dataset_name: "taskonomy"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        ims_pattern: "{frame:06d}.png"
+        prob: 1.0
+      - dataset_name: "wildrgbd/train"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        prob: 1.0
+      - dataset_name: "mapfree/train"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        use_masks: True
+        masks_dir: masks
+        prob: 1.0
+      - dataset_name: "co3dv2/train"
+        source_type: RANDOM
+        closest_using_t: False
+        extra_src_pool: 0
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        use_masks: True
+        masks_dir: masks
+        prob: 1.0
+      - dataset_name: "mapillary"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        interp_using_t: True
+        closest_using_t: True
+        prob: 0.5
+      - dataset_name: "dl3dv"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        use_masks: True
+        masks_dir: masks
+        prob: 1.0
+      - <<: *train_dataset_cfg
+
+val_dataloader_cfg:
+  <<: *dataloader_defaults
+  # official: limit_val_batches: 400
+  max_iter: 100
+  sampler_cfg:
+    type: DistributedSequentialSampler
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+  batch_sampler_cfg:
+    type: ImageBasedBatchSampler
+    batch_size: 1
+    # official: img_nums: [2, 12]
+    n_srcs_list: *full_n_srcs_list
+    n_srcs_prob: *full_n_srcs_prob
+    aspect_ratio_range: [0.3, 1.0]
+    fix_random: True
+  dataset_cfg:
+    _delete_: True
+    type: GeneralizableDataset
+    split: VAL
+    runtime_build: True
+    runtime_dataset_cache_size: 1
+    dataset_indexing: True
+    parallel_loading: True
+    dataloading_workers: 64
+    disk_dataset: True
+    meta_roots: *meta_roots
+    metaset_cfgs:
+      # Synthetic datasets
+      - dataset_name: "blendedmvs/train"
+        extra_src_pool: 36
+        prob: 1.0
+      - dataset_name: "hypersim/train"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 1.0
+      - dataset_name: "hypersim/val"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 0.2
+      - dataset_name: "GTAV_1080"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.95
+        ims_pattern: "{frame:06d}.png"
+        prob: 0.5
+      - dataset_name: "replica_niceslam"
+        prob: 0.05
+      - dataset_name: "tartanair"
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        ims_pattern: "{frame:06d}.png"
+        prob: 1.0
+      - dataset_name: "vkitti2"
+        source_type: RANDOM
+        interp_using_t: True
+        closest_using_t: True
+        nearby_sampling: True
+        nearby_expand_ratio: 8
+        nearby_allow_duplicate: True
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        extra_src_pool: 0
+        ims_pattern: "{frame:05d}.jpg"
+        mks_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.exr"
+        prob: 0.5
+      - dataset_name: "ase"
+        rot90: "clockwise"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.99
+        extra_src_pool: 88
+        prob: 1.0
+      - dataset_name: "adt"
+        rot90: "clockwise"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 1.0
+        interp_using_t: True
+        closest_using_t: True
+        prob: 0.25
+      - dataset_name: "megadepth"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        prob: 0.25
+      - dataset_name: "scannetpp"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        extra_src_pool: 116
+        prob: 1.0
+      - dataset_name: "taskonomy"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        ims_pattern: "{frame:06d}.png"
+        prob: 1.0
+      - dataset_name: "wildrgbd/train"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        prob: 1.0
+      - dataset_name: "mapfree/train"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        use_masks: True
+        masks_dir: masks
+        prob: 1.0
+      - dataset_name: "co3dv2/train"
+        source_type: RANDOM
+        closest_using_t: False
+        extra_src_pool: 0
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        use_masks: True
+        masks_dir: masks
+        prob: 1.0
+      - dataset_name: "mapillary"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        interp_using_t: True
+        closest_using_t: True
+        prob: 0.5
+      - dataset_name: "dl3dv"
+        min_depth_quantile: 0.02
+        max_depth_quantile: 0.95
+        use_masks: True
+        masks_dir: masks
+        prob: 1.0
+      - <<: *val_dataset_cfg

@@ -1,0 +1,17 @@
+configs:
+    - ./finetune_5090_sparse_topk2048_l9_19_p34_record.yaml
+
+model_cfg:
+    vggt_cfg:
+        indexer_cfg:
+            topk: 1024
+            sparse_lr_decay: cap
+        aggregator_cfg:
+            # Keep indexer layers 9-19 unchanged, but run all former global-only layers frame-locally.
+            global_frame_attention_layers: "0-8,20-23"
+        depth_head_cfg:
+            chunk_cfg:
+                frames_chunk_size: 2
+        point_head_cfg:
+            chunk_cfg:
+                frames_chunk_size: 2

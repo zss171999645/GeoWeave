@@ -1,0 +1,56 @@
+# Official VGGT finetune model-level overrides (memory/indexer)
+
+model_cfg:
+  vggt_cfg:
+    memory_cfg:
+      use_xformers: False
+      use_checkpoint: True
+      patch_embed_chunk_size: 0
+      fused_attn: True
+      output_list_cfg:
+        keep_layers: null
+        keep_last: True
+    enable_point: False
+    depth_head_cfg:
+      type: DPTHead
+    point_head_cfg:
+      type: DPTHead
+    indexer_cfg:
+      enabled: True
+      n_heads: 3
+      head_dim: 64
+      # warmup: 仅训练 indexer
+      warmup_steps: 15000
+      warmup_lr: 1.0e-3
+      warmup_lr_decay: cosine
+      # 设为 null 时默认使用 sparse_lr；若 sparse_lr 也为 null，则回退到 scheduler 当前 lr
+      warmup_end_lr: null
+      warmup_only_indexer_loss: True
+      warmup_no_grad_attn: True
+      use_dense_flash_attn_warmup_kernel: False
+      streaming_kl_loss: False
+      streaming_kl_autograd: False
+      score_head_chunk_size: 0
+      score_key_chunk_size: 0
+      warmup_loss_weight: 1.0
+      save_warmup_ckpt: True
+      warmup_ckpt_tag: warmup_end
+      layerwise_backward: False
+      layerwise_backward_warmup_only: True
+      # dense 阶段（若不启用 sparse）用于 indexer loss 的权重
+      loss_weight: 0.2
+      # sparse: 控制是否进入第二阶段
+      enable_sparse: True
+      inference_sparse: True
+      sparse_loss_weight: 0.2
+      # sparse_lr_decay=scheduler 时沿用 scheduler；设为 constant 才固定为 sparse_lr
+      sparse_lr: 5.0e-5
+      sparse_lr_decay: scheduler
+      eps: 1.0e-6
+      detach_input: True
+      # indexer 结构
+      topk: 8
+      # 0-based global layer indices to enable indexer
+      indexer_layers: all
+      # warmup 后 head 学习率缩放
+      head_lr_scale: 0.2

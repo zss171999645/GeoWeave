@@ -1,0 +1,12 @@
+category	path_pattern	reason
+temporary_cache	/aidi/.tmp/upload_*	regenerable submit upload packages
+temporary_cache	/.tb_cache	local cache
+temporary_config	/expanded_configs	generated expanded configs; keep only if tied to a paper run
+temporary_config	/configs/exps/vggt/.generated	generated configs; keep only if referenced by records
+temporary_root_file	/04 if cam03_cam04 in seq else 04-	zero-byte stray shell fragment recorded in archive cleanup candidates
+mac_metadata	/.DS_Store	macOS metadata
+mac_metadata	/aidi/docs/.DS_Store	macOS metadata
+mac_metadata	/aidi/scripts/.DS_Store	macOS metadata
+local_tmp_script	/tmp/run_re10k_*.sh	local one-off eval launchers
+local_tmp_config	/tmp/unified_eval_*_20260422.yaml	local one-off eval configs
+local_tmp_config	/tmp/re10k_attn_configs/*.yaml	local one-off eval configs

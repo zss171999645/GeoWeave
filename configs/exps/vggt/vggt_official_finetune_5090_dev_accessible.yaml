@@ -1,0 +1,166 @@
+# Dev-only local validation config for 5090 container.
+# Keep training logic identical to the main 5090 finetune config, but
+# restrict meta_roots to bucket paths that are readable by feng01.zhou
+# inside the dev container.
+
+configs:
+  - configs/exps/vggt/vggt_official_finetune_5090.yaml
+
+__temp_vars__:
+  accessible_meta_roots: &accessible_meta_roots
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/val
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/replica_niceslam
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/tartanair
+    - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/vkitti2
+
+  accessible_train_dataset_cfg: &accessible_train_dataset_cfg
+    type: MultiviewPointDataset
+    ddp_shard_dataset: False
+    dataloading_workers: 8
+    n_rays: -1
+    proc_max_size: 518
+    proc_align_size: 14
+    disk_dataset: True
+    dist_opt_K: False
+    use_depths: True
+    use_vhulls: False
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+    source_type: DISTANCEROT
+    min_depth_quantile: 0.0
+    max_depth_quantile: 1.0
+    scale_type: DIST
+    portrait_check: False
+    center_crop: True
+    limit_max_aspect_ratio_as_original_ratio: False
+    use_world_coord: True
+    n_srcs_list: null
+    n_srcs_prob: null
+    split: TRAIN
+    aug_scale: 0.2
+    aug_scale_ratio: 1.0
+    aug_image: True
+    aug_image_cfg:
+      color_jitter:
+        brightness: 0.5
+        contrast: 0.5
+        saturation: 0.5
+        hue: 0.1
+        p: 0.9
+      gray_scale: True
+      gau_blur: False
+    aug_image_cojit: True
+    aug_image_cojit_ratio: 0.3
+    extra_src_pool: 88
+
+  accessible_val_dataset_cfg: &accessible_val_dataset_cfg
+    type: MultiviewPointDataset
+    ddp_shard_dataset: False
+    dataloading_workers: 8
+    n_rays: -1
+    proc_max_size: 518
+    proc_align_size: 14
+    disk_dataset: True
+    dist_opt_K: False
+    use_depths: True
+    use_vhulls: False
+    view_sample: [0, null, 1]
+    frame_sample: [0, null, 1]
+    source_type: DISTANCEROT
+    min_depth_quantile: 0.0
+    max_depth_quantile: 1.0
+    scale_type: DIST
+    portrait_check: False
+    center_crop: True
+    limit_max_aspect_ratio_as_original_ratio: False
+    use_world_coord: True
+    n_srcs_list: null
+    n_srcs_prob: null
+    split: VAL
+    extra_src_pool: 0
+
+dataloader_cfg:
+  dataset_cfg:
+    meta_roots: *accessible_meta_roots
+    metaset_cfgs:
+      - dataset_name: "hypersim/train"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 1.0
+      - dataset_name: "hypersim/val"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 0.2
+      - dataset_name: "GTAV_1080"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.95
+        ims_pattern: "{frame:06d}.png"
+        prob: 0.5
+      - dataset_name: "replica_niceslam"
+        prob: 0.05
+      - dataset_name: "tartanair"
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        ims_pattern: "{frame:06d}.png"
+        prob: 1.0
+      - dataset_name: "vkitti2"
+        source_type: RANDOM
+        interp_using_t: True
+        closest_using_t: True
+        nearby_sampling: True
+        nearby_expand_ratio: 8
+        nearby_allow_duplicate: True
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        extra_src_pool: 0
+        ims_pattern: "{frame:05d}.jpg"
+        mks_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.exr"
+        prob: 0.5
+      - <<: *accessible_train_dataset_cfg
+
+val_dataloader_cfg:
+  dataset_cfg:
+    meta_roots: *accessible_meta_roots
+    metaset_cfgs:
+      - dataset_name: "hypersim/train"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 1.0
+      - dataset_name: "hypersim/val"
+        extra_src_pool: 36
+        max_depth_quantile: 0.98
+        prob: 0.2
+      - dataset_name: "GTAV_1080"
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.95
+        ims_pattern: "{frame:06d}.png"
+        prob: 0.5
+      - dataset_name: "replica_niceslam"
+        prob: 0.05
+      - dataset_name: "tartanair"
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        ims_pattern: "{frame:06d}.png"
+        prob: 1.0
+      - dataset_name: "vkitti2"
+        source_type: RANDOM
+        interp_using_t: True
+        closest_using_t: True
+        nearby_sampling: True
+        nearby_expand_ratio: 8
+        nearby_allow_duplicate: True
+        max_depth: 200
+        min_depth_quantile: 0.0
+        max_depth_quantile: 0.98
+        extra_src_pool: 0
+        ims_pattern: "{frame:05d}.jpg"
+        mks_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.exr"
+        prob: 0.5
+      - <<: *accessible_val_dataset_cfg

@@ -1,0 +1,72 @@
+val_dataloader_cfg:
+  dataset_cfg:
+    _delete_: True
+    type: GeneralizableDataset
+    split: VAL
+    global_sharding: False
+    runtime_build: False
+    delete_after_runtime_build: True
+    dataset_indexing: False
+    parallel_loading: True
+    dataloading_workers: 64
+    data_roots_file: val_data_roots.txt
+    meta_roots:
+      - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/distort_2000h_v2/eval1000clip_202603171836
+    metaset_cfgs:
+      - dataset_name: driving_eval1000clip
+        min_depth: 2
+        max_depth: 60
+        view_sample: [0, 6, 1]
+        use_keyframe: True
+        target_img_list_file: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_lists/business_v2_standard75_from_hardsample_00021999_imglist.txt
+      - type: MultiviewPointDataset
+        ddp_shard_dataset: False
+        dataloading_workers: 8
+        n_rays: -1
+        proc_max_size: 518
+        proc_align_size: 14
+        max_size: 518
+        align_size: 14
+        disk_dataset: True
+        dist_opt_K: False
+        use_depths: True
+        use_vhulls: False
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        source_type: MULTIVIEWSEQ
+        min_depth_quantile: 0.0
+        max_depth_quantile: 1.0
+        scale: 15.0
+        scale_type: MANUAL
+        portrait_check: False
+        center_crop: True
+        limit_max_aspect_ratio_as_original_ratio: False
+        use_world_coord: True
+        extra_src_pool: 5
+        meta_file: __meta_3ddr.pkl
+        extri_file: extri_pandar.yml
+        extri_3ddr_file: extri_3ddr.yml
+        use_3ddr: True
+        shared_aug_scale_value: True
+        interp_using_t: True
+        closest_using_t: True
+        sparse_interpolate: True
+        use_png_depth: True
+        ims_pattern: "{frame:05d}.jpg"
+        mks_pattern: "{frame:05d}.png"
+        dps_pattern: "{frame:05d}.png"
+        is_bussi_data: True
+        target_img_list_file: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_lists/business_v2_standard75_from_hardsample_00021999_imglist.txt
+  sampler_cfg:
+    type: DistributedSequentialSampler
+    frame_sample: [0, null, 1]
+    view_sample: [0, null, 1]
+  batch_sampler_cfg:
+    type: ImageBasedBatchSampler
+    batch_size: 1
+    n_srcs_list: [23]
+    n_srcs_prob: [1.0]
+    fix_random: True
+    aspect_ratio_range: -1
+
+exp_name: "{{fileBasenameNoExtension}}"

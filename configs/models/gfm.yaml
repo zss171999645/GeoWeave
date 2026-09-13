@@ -1,0 +1,73 @@
+dataloader_cfg: &dataloader_cfg
+    dataset_cfg: &dataset_cfg # type: MultiviewPointDataset
+        type: MultiviewPointDataset
+        n_rays: -1
+        view_sample: [0, null, 1] # use all views by default
+        frame_sample: [0, null, 1] # use all views by default
+        n_srcs_list: [4]
+        n_srcs_prob: [1.0]
+        extra_src_pool: 10
+    batch_sampler_cfg: &batch_sampler_cfg
+        batch_size: 1
+
+val_dataloader_cfg:
+    <<: *dataloader_cfg
+    dataset_cfg:
+        <<: *dataset_cfg
+        extra_src_pool: 0
+    sampler_cfg:
+        frame_sample: [0, 1, 1]
+        view_sample: [0, 1, 1]
+
+runner_cfg:
+    record_images_to_tb: False # save time
+
+    scheduler_cfg:
+        type: ExponentialLR
+
+    evaluator_cfg:
+        type: GeometryEvaluator
+        compute_metrics: ['ND', 'DAC']
+
+    visualizer_cfg:
+        type: SequentialVisualizer
+        visualizer_cfgs:
+            - type: VolumetricVideoVisualizer
+              types: ['DEPTH', 'SRCINPS']
+              store_alpha_channel: False
+              dpt_cm: spectral
+            - type: GeometryVisualizer
+              types: ['POINT']
+              pts_thresh: 2073600
+
+    optimizer_cfg:
+        lr: 0.00005 # 5e-5
+
+    epochs: 240
+    decay_epochs: 30
+    ep_iter: 500 # 30000 by paper
+    save_latest_ep: 20
+    save_ep: 20
+    eval_ep: 5
+    log_interval: 1
+
+model_cfg:
+    # Custom sampler
+    chunkify_rays: False # let the user handle the output and input
+    let_user_handle_input: True # let the user handle the output and input
+    sampler_cfg:
+        type: GPTSampler
+        window_size: 8
+
+    # Empty renderer and network
+    renderer_cfg:
+        type: NoopRenderer
+    network_cfg:
+        type: NoopNetwork # no importrance sampling for this
+
+    # Custom loss
+    supervisor_cfg:
+        supervisor_cfgs:
+            - type: PointSupervisor
+        xyz_loss_weight: 1.0
+        xyz_consistency_weight: 0.5

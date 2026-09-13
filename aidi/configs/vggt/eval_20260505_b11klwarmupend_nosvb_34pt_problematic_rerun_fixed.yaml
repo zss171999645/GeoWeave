@@ -1,0 +1,159 @@
+run:
+  name: b11klwarmupend_nosvb_34pt_problematic_rerun_kernel_fixed_20260505
+  gpu_ids: "0,1,2,3,4,5,6,7"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_b11klwarmupend_nosvb_34pt/problematic_rerun_kernel_fixed_20260505
+  skip_existing: false
+  continue_on_error: true
+
+vggt_inference_env: &vggt_inference_env
+  - VGGT_INDEXER_TOPK_FWD_MODE=triton
+  - VGGT_INDEXER_TOPK_OUTER_QUERY_CHUNK=12288
+  - VGGT_INDEXER_SCORE_DIRECT_OUT=1
+  - VGGT_INDEXER_TOPK_REUSE_BUFFER=1
+  - VGGT_INDEXER_TOPK_REUSE_OUT=1
+  - VGGT_INDEXER_TOPK_SORTED=0
+  - VGGT_INDEXER_TOPK_AUTO_QUERY_CHUNK=1
+  - VGGT_INDEXER_TOPK_MERGE_INDEX_KERNEL=1
+  - VGGT_INDEXER_TOPK_MERGE_INDEX_BLOCK_K=256
+  - VGGT_INDEXER_SCORE_USE_TC=1
+  - VGGT_INDEXER_SCORE_BUCKET_POLICY=auto_tc_v1
+  - VGGT_INDEXER_SCORE_BLOCK_M=64
+  - VGGT_INDEXER_SCORE_BLOCK_N=256
+  - VGGT_INDEXER_SCORE_NUM_WARPS=8
+  - VGGT_INDEXER_SCORE_NUM_STAGES=1
+  - VGGT_INDEXER_TOPK_PERSIST_WORKSPACE=1
+  - VGGT_INDEXER_TOPK_PERSIST_WORKSPACE_MODE=pool
+  - VGGT_INDEXER_TOPK_CACHE_ARANGE=1
+  - VGGT_INDEXER_TOPK_ARANGE_CACHE_MAX=8
+  - VGGT_SPARSE_FLASH_ATTN=1
+  - VGGT_SPARSE_FLASH_DISABLE_ATTN_SUM=1
+  - VGGT_SPARSE_FLASH_DIRECT_BHTD=1
+  - VGGT_SPARSE_FLASH_NO_QKV_CONTIG=1
+  - VGGT_SPARSE_FLASH_NO_KV_CONTIG=1
+  - VGGT_DSA_SPARSE_STREAM_FASTPATH=1
+  - VGGT_DSA_SPARSE_STREAM_QCHUNK=12288
+  - VGGT_DSA_SPARSE_STREAM_FORCE_V_CONTIG=1
+  - VGGT_DSA_SPARSE_STREAM_RECORD_LAST=0
+  - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/vggt/official/finetune_5090_sparse_20260502_b11klwarmupend_13ds_topk1024_l9_19_nosvb_core4val_v3/34.pt
+  config: aidi/configs/vggt/finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+
+datasets:
+  sintel:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  bonn:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/bonn_pi3/rgbd_bonn_dataset
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  kitti:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/kitti_official_download/depth_selection/val_selection_cropped
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  eth3d:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/eth3d/train
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_root
+    seq_map: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_seqmap.json
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+    pointcloud:
+      enabled: true
+      extra_env: *vggt_inference_env
+      max_sequences: 0
+
+  7scenes:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+    pointcloud:
+      extra_env: *vggt_inference_env
+      sparse: {enabled: true, max_sequences: 0}
+      dense: {enabled: true, max_sequences: 0}
+
+  blendedmvs:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/test
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  mvs_synth:
+    data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  scannetpp:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  vkitti2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/vkitti2_resolved
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  co3dv2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/co3dv2/test
+    depth:
+      vggt_input_preprocess: official
+      vggt_topk_override: 1024
+      extra_env: *vggt_inference_env
+      extra_args: ["--overwrite"]
+      videodepth: {enabled: true, max_seqs: 0, max_frames_per_seq: 0}
+
+  dtu:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/dtu_test_mvsnet_release_full
+    pointcloud:
+      enabled: true
+      extra_env: *vggt_inference_env
+      max_sequences: 0
+
+  nrgbd:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/NRGBD
+    pointcloud:
+      extra_env: *vggt_inference_env
+      sparse: {enabled: true, max_sequences: 0}
+      dense: {enabled: true, max_sequences: 0}

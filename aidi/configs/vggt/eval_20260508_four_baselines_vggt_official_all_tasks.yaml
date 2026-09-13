@@ -1,0 +1,23 @@
+extends: eval_20260508_four_baselines_all_tasks_base.yaml
+
+run:
+  name: four_baselines_vggt_official_all_tasks_20260508
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260508_four_baselines/vggt_official
+
+model:
+  kind: official
+  official_ckpt_root: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B
+
+datasets:
+  sintel:
+    depth:
+      monodepth:
+        vggt_input_preprocess: official
+  bonn:
+    depth:
+      monodepth:
+        vggt_input_preprocess: official
+  kitti:
+    depth:
+      monodepth:
+        vggt_input_preprocess: official

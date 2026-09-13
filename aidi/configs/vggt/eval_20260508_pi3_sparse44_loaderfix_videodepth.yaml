@@ -1,0 +1,110 @@
+run:
+  name: pi3_sparse54_loaderfix_videodepth_50views_20260508
+  gpu_ids: "1,2,3"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260508_pi3_sparse54_loaderfix_50views/videodepth
+  save_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline
+  skip_existing: true
+  continue_on_error: true
+  auto_skip_known_oom_official_videodepth_on_5090: false
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/record/pi3/native_sparse/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/outputs/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/ckpts/checkpoint_54/pytorch_model.bin
+  pi3_config: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/record/pi3/native_sparse/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/outputs/pi3_native_sparse_vggt15_ckpt24_dynres_topk1024_l9_17_lw10_splitclip_static0_depthgt_20260505_0335/.hydra/config.yaml
+  pi3_model_impl: native_sparse
+  pi3_native_root: aidi/third_party/pi3_training
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  sintel:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: &pi3_sparse_eval_env
+          - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+          - VGGT_INDEXER_TOPK_OUTER_QUERY_CHUNK=8192
+
+  bonn:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/bonn_pi3/rgbd_bonn_dataset
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  kitti:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/kitti_official_download/depth_selection/val_selection_cropped
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  eth3d:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/eth3d/train
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  7scenes:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  blendedmvs:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/test
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  mvs_synth:
+    data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  vkitti2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/vkitti2_resolved
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  scannetpp:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env
+
+  co3dv2:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/co3dv2/test
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+        extra_env: *pi3_sparse_eval_env

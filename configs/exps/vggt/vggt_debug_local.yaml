@@ -1,0 +1,70 @@
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: False # use the custom VGGT batching
+        dinov2_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitl14_reg4_pretrain.pth
+        agg_regator_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/aggregator.pt
+        cam_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/camera.pt
+        xyz_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/point.pt
+        dpt_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/depth.pt
+        tra_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/track.pt
+
+dataloader_cfg:
+    dataset_cfg:
+        _delete_: True
+        type: MultiviewPointDataset
+        data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train/ai_001_002/00 # train scene
+        # data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train/ai_043_003/00
+        # data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/test/ai_001_010/00 # test scene
+        n_rays: -1
+        ratio: 1.0 # do not use this to control the resizing now
+        max_size: 518 # use this to resize the image
+        align_size: 14 # align the image to this size
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        n_srcs_list: [1]
+        n_srcs_prob: [1.0]
+        disk_dataset: False # to avoid loading all data into memory
+        dist_opt_K: False # no distortion for synthetic data
+        use_depths: True # use ground truth depths
+        source_type: DISTANCEROT
+        use_world_coord: True
+        min_depth_quantile: 0.0
+        max_depth_quantile: 1.0
+        scale_type: DIST
+    sampler_cfg:
+        type: SequentialSampler
+
+val_dataloader_cfg:
+    dataset_cfg:
+        _delete_: True
+        type: MultiviewPointDataset
+        split: VAL
+        data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train/ai_001_002/00 # train scene
+        # data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/test/ai_001_010/00 # test scene
+        n_rays: -1
+        max_size: 518 # use this to resize the image
+        align_size: 14 # align the image to this size
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        n_srcs_list: [1]
+        n_srcs_prob: [1.0]
+        disk_dataset: False # to avoid loading all data into memory
+        dist_opt_K: False # no distortion for synthetic data
+        use_depths: True # use ground truth depths
+        source_type: DISTANCEROT
+        use_world_coord: True
+        min_depth_quantile: 0.0
+        max_depth_quantile: 1.0
+        scale_type: DIST
+    sampler_cfg:
+        view_sample: [0, 10, 1]
+        frame_sample: [0, 1, 1]
+
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

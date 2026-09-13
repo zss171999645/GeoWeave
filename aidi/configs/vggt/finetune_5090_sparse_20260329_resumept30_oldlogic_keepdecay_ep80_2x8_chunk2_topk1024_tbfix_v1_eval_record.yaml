@@ -1,0 +1,13 @@
+_base_: ./finetune_5090_sparse_topk2048_l9_19_p34_record.yaml
+
+model_cfg:
+    vggt_cfg:
+        indexer_cfg:
+            topk: 1024
+            sparse_lr_decay: cap
+        depth_head_cfg:
+            chunk_cfg:
+                frames_chunk_size: 2
+        point_head_cfg:
+            chunk_cfg:
+                frames_chunk_size: 2

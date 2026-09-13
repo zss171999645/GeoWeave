@@ -1,0 +1,317 @@
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+
+# FSDP: https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html
+fsdp_enabled: False
+runner_cfg:
+    # fsdp_shard_class_list: ['NestedTensorBlock', 'Block', 'DPTHead', 'CameraHead']
+    gradient_accumulation_steps: 2
+    ep_iter: 1000 # 2x the default for using gradient accumulation
+    log_interval: 20 # log every 20 iterations for using gradient accumulation
+    empty_cache_ep: 1 # eval_ep
+
+model_cfg:
+    sampler_cfg:
+        dinov2_ckpt: "/horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitl14_reg4_pretrain.pth"
+        vggt_batching: True # use the custom VGGT batching
+
+dataloader_cfg:
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: TRAIN
+        runtime_build: True  # modified by xiaoyang, avoid loading all data into memory
+        global_sharding: True
+        dataset_indexing: True
+        n_frames_batch: 24
+        parallel_loading: True
+        dataloading_workers: 64
+        meta_roots:
+            # Synthetic datasets
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/train
+            - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train
+            - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/val
+            - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+            - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/replica_niceslam
+            - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/tartanair
+            - /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/vkitti2
+            # - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/point_odyssey/train
+            # - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/point_odyssey/val
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/ase
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/adt
+            # Real-world datasets
+            # - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/ARKitscenes/Training
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/megadepth
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+            # - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp_v2/nvs_sem_train
+            # - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp_v2/nvs_sem_val
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/taskonomy
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/wildrgbd/train
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/mapfree/train
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/co3dv2/train
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/mapillary/train
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/mapillary/val
+            - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/dl3dv
+        metaset_cfgs:
+            # The unified ratio is only used for a placeholder
+            # The actual resolution is determined by the max_size, lazy resizing
+            # Synthetic datasets
+            - dataset_name: "blendedmvs"
+              ratio: 1.0 # blendedmvs
+            - dataset_name: "hypersim/train"
+              ratio: 1.0 # hypersim/train
+              max_depth_quantile: 0.99
+            - dataset_name: "hypersim/val"
+              ratio: 1.0 # hypersim/val
+              max_depth_quantile: 0.99
+            - dataset_name: "GTAV_1080"
+              ratio: 1.0 # GTAV_1080
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.95
+            - dataset_name: "replica_niceslam"
+              ratio: 1.0 # replica_niceslam
+            - dataset_name: "tartanair"
+              ratio: 1.0 # tartanair
+              max_depth: 200 # meter unit, remove the sky
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.98
+            - dataset_name: "vkitti2"
+              ratio: 1.0 # vkitti2
+              interp_using_t: True
+              closest_using_t: True
+              max_depth: 200 # meter unit, remove the sky
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.98
+            # - ratio: 1.0 # point_odyssey/train
+            # - ratio: 1.0 # point_odyssey/val
+            - dataset_name: "ase"
+              ratio: 1.0 # ase
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.99
+            - dataset_name: "adt"
+              ratio: 1.0 # adt
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              interp_using_t: True
+              closest_using_t: True
+            # Real-world datasets
+            # - ratio: 1.0 # ARKitscenes
+            #   min_depth_quantile: 0.02
+            #   max_depth_quantile: 0.98
+            #   dist_opt_K: True
+            - dataset_name: "megadepth"
+              ratio: 1.0 # megadepth
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+            - dataset_name: "scannetpp"
+              ratio: 1.0 # scannetpp
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+            # - ratio: 1.0 # scannetpp_v2/nvs_sem_train
+            #   min_depth_quantile: 0.02
+            #   max_depth_quantile: 0.95
+            #   dist_opt_K: True
+            # - ratio: 1.0 # scannetpp_v2/nvs_sem_val
+            #   min_depth_quantile: 0.02
+            #   max_depth_quantile: 0.95
+            #   dist_opt_K: True
+            - dataset_name: "taskonomy"
+              ratio: 1.0 # taskonomy
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+            - dataset_name: "wildrgbd/train"
+              ratio: 1.0 # wildrgbd/train, some scenes may have different resolution
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+            - dataset_name: "mapfree/train"
+              ratio: 1.0 # mapfree/train
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+              use_masks: True
+              masks_dir: masks
+            - dataset_name: "co3dv2/train"
+              ratio: 1.0 # co3dv2/train
+              min_depth_quantile: 0.0
+              max_depth_quantile: 0.98
+              dist_opt_K: True
+              use_masks: True
+              masks_dir: masks
+            - dataset_name: "mapillary/train"
+              ratio: 1.0 # mapillary/train
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+              interp_using_t: True
+              closest_using_t: True
+            - dataset_name: "mapillary/val"
+              ratio: 1.0 # mapillary/val
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              dist_opt_K: True
+              interp_using_t: True
+              closest_using_t: True
+            - dataset_name: "dl3dv"
+              ratio: 1.0 # dl3dv, already undistorted
+              min_depth_quantile: 0.02
+              max_depth_quantile: 0.95
+              use_masks: True
+              masks_dir: masks
+            - type: VGGTDataset
+              ddp_shard_dataset: False
+              n_rays: -1
+              max_size: 518 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              dist_opt_K: False # no distortion for synthetic data
+              use_depths: True # use ground truth depths
+              use_vhulls: False
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              source_type: DISTANCEROT
+              extra_src_pool: 24 # expand the source pool to twice the number of sources
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              scale_type: DIST
+              portrait_check: True
+              center_crop: False  # added by xiaoyang; MAKE fx==fy does not change and the optical center (cx, cy) is at the center of the image
+              n_srcs_list: [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
+              ]
+              n_srcs_prob: [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+              ]
+    batch_sampler_cfg:
+              n_srcs_list: [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
+              ]
+              n_srcs_prob: [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+              ]
+
+val_dataloader_cfg:
+    dataset_cfg:
+        _delete_: True
+        type: MultiviewPointDataset
+        split: VAL
+        data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/train/ai_001_002/00 # train scene
+        # data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/hypersim/test/ai_001_010/00 # test scene
+        n_rays: -1
+        max_size: 518 # use this to resize the image
+        align_size: 14 # align the image to this size
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1]
+        n_srcs_list: [7]
+        n_srcs_prob: [1.0]
+        disk_dataset: False # to avoid loading all data into memory
+        dist_opt_K: False # no distortion for synthetic data
+        use_depths: True # use ground truth depths for evaluation
+        source_type: DISTANCEROT
+        use_world_coord: True
+        min_depth_quantile: 0.0
+        max_depth_quantile: 1.0
+        scale_type: DIST
+    sampler_cfg:
+        view_sample: [0, null, 10]
+        frame_sample: [0, 1, 1]
+    batch_sampler_cfg:
+        n_srcs_list: [7]
+        n_srcs_prob: [1.0]
+
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

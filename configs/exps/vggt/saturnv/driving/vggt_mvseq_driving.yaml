@@ -1,0 +1,259 @@
+# ft业务行车数据 ablation结论 https://horizonrobotics.feishu.cn/wiki/Vm9IwO7iVivRCNkk6bjc5APCnHd#K311dPP8LodtYtxCfeZcRaeUnqf
+# 1. pose-weight x5：pose-auc-01提升一个点左右，depth无影响；
+# 2. aug：增加aug对pose和depth均有提升；当前v4版本收益待确认；
+# 3. scaleup x4：pose-auc-01提升2.2个点，depth提升4.3个点；还能进一步scaleup；
+# 4. lr：2x8卡 lr设为1e-5，相较于5e-6 pose-auc-01提升1.4个点，depth提升2个点；
+# 5. vggtbatchsampler：影响不大，pose（translation）有略微收敛加速，depth基本无变化；
+
+# 收敛性质：
+# 1. 默认2x8卡，lr from 2e-5 to 1e-8，160k step：depth在100k左右停止收敛，pose在130k左右停止收敛；
+
+# Configuration for VGGT
+configs:
+    - configs/base.yaml # default arguments for the whole codebase
+    - configs/models/vggt.yaml # network model configuration
+    - configs/models/vggt_sample.yaml
+
+# FSDP: https://docs.pytorch.org/tutorials/intermediate/FSDP_tutorial.html
+fsdp_enabled: False
+runner_cfg:
+    gradient_accumulation_steps: 2
+    fsdp_shard_class_list: ['NestedTensorBlock', 'Block', 'DPTHead', 'CameraHead']
+    test_with_ddp_sharding: &test_with_ddp_sharding True
+
+    visualizer_cfg:
+        type: SequentialVisualizer
+        visualizer_cfgs: []
+
+    evaluator_cfg:
+        type: GeometryEvaluator
+        compute_cam_metrics: ['CAM_ACC_AUC','CAM_EVO']
+        compute_dpt_metrics: ["DPT","DPT_TARGET"]
+        compute_xyz_metrics: ['XYZ']
+        fixscale: True
+    
+    optimizer_cfg:
+        lr: 2.e-5 # default 2*8 with accumulation
+        eps: 1.e-8
+        weight_decay: 5.e-2
+        lr_table:
+            patch_embed: 4.e-6 # default 2*8 with accumulation
+        optimizer_cfg:
+            type: AdamW # most common in transformer models
+
+    scheduler_cfg:
+        type: WarmupCosineLR
+        warmup_iters: 0  # xy: add warmup
+
+    epochs: 160 # 160k by paper
+    ep_iter: 1000
+    save_latest_ep: 5  # xy: less to save time
+    save_ep: 4  # xy: less to save time
+    eval_ep: 4  # xy: less to save time
+    log_interval: 50
+    test_before_first_epoch: True
+    empty_cache_ep: 1 # eval_ep
+    
+
+model_cfg:
+    sampler_cfg:
+        vggt_batching: False # use the custom VGGT batching
+        load_pretrained: True
+        use_cam_emb: True  # use camera embedding
+        # freeze_list: ["agg_regator", "xyz_decoder", "dpt_decoder"]  # for debug
+        dinov2_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitl14_reg4_pretrain.pth
+        agg_regator_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/aggregator.pt
+        cam_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/camera.pt
+        xyz_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/point.pt
+        dpt_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/depth.pt
+        tra_decoder_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B/track.pt
+        use_3ddr: True
+        use_3ddr_ratio: 0.7
+        cam_embed_cfg:
+            type: CamMlp
+            in_features: 10
+            hidden_features: 1024
+            out_features: 4096
+
+dataloader_cfg:
+    num_workers: 8  # xy: modify num_workers here
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: TRAIN
+        runtime_build: True  # modified by xiaoyang, avoid loading all data into memory
+        global_sharding: True
+        dataset_indexing: True
+        parallel_loading: True
+        dataloading_workers: 8  # TODO: not working if runtime_build is True
+        delete_after_runtime_build: True
+        meta_roots:
+            # driving dataset
+            - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/20250613_train
+            # - /horizon-bucket/perception-dataprocess/4dlabel/static_visual/002_vggt_data/evc_data/business_data/driving_data/20250613_train/Site_105_73848136868102_29_668486678680722_20250404-221753-935891_Site_105_73848_29_66849_0_20250614035953/DZ508_20240731_204607
+        metaset_cfgs:
+            # The unified ratio is only used for a placeholder
+            # The actual resolution is determined by the max_size, lazy resizing
+            # Synthetic datasets
+
+            - dataset_name: "bussinessdriving" # 8421 scenes
+              ratio: 1.0
+              interp_using_t: True
+              closest_using_t: True
+              sparse_interpolate: True
+              use_png_depth: True
+              max_depth: 60
+              ims_pattern: '{frame:05d}.jpg'
+              dps_pattern: '{frame:05d}.png'
+              prob: 1.0
+              is_bussi_data: True
+
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              dataloading_workers: 8  # xy: pls set dataloading_workers here
+              n_rays: -1
+              proc_max_size: -1 # xy: use this to resize the image
+              proc_align_size: 1 # xy: align the image to this size
+              max_size: 518 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              dist_opt_K: False # no distortion for synthetic data
+              use_depths: True # use ground truth depths
+              use_vhulls: False
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              source_type: MULTIVIEWSEQ
+              extra_src_pool: 16  # expand the source pool to twice the number of sources
+              ref_view_type: random_front_ref_view # choice: front_ref_view, random_front_ref_view, random_ref_view
+              scale: 15.0
+              scale_type: MANUAL
+              meta_file: __meta_3ddr.pkl
+              use_3ddr: True
+              portrait_check: False
+              center_crop: True  # added by xiaoyang; MAKE fx==fy does not change and the optical center (cx, cy) is at the center of the image
+              limit_max_aspect_ratio_as_original_ratio: False  # added by xiaoyang; limit the maximum aspect ratio as the original image ratio
+              aug_scale: 0.1 # fov augmentation
+              aug_scale_ratio: 1.0
+              aug_image: True # image augmentation
+              aug_image_cojit: True
+              aug_image_cojit_ratio: 0.3 # 30% of the time, use individual image augmentation for each source
+              shared_aug_scale_value: True
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              n_srcs_list: &train_n_srcs_list [
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12,
+                  13,
+                  14,
+                  15,
+                  16,
+                  17,
+                  18,
+                  19,
+                  20,
+                  21,
+                  22,
+                  23
+                ]
+              n_srcs_prob: &train_n_srcs_probs [
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0,
+                  1.0
+                ]
+        # data_roots_file: data_roots_20percent.txt
+    batch_sampler_cfg:  # config of class ImageBasedBatchSampler; NOTE that if this is set, the n_srcs_list and n_srcs_prob in the dataset_cfg will be ignored
+        aspect_ratio_range: [0.5, 0.85] # random aspect ratio range
+        n_srcs_list: *train_n_srcs_list  # copied from dataset_cfg
+        n_srcs_prob: *train_n_srcs_probs  # copied from dataset_cfg
+        
+
+val_dataloader_cfg:
+    dataset_cfg:
+        _delete_: True
+        type: GeneralizableDataset
+        split: VAL
+        meta_roots:
+            # driving test datasets 6v
+            - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/business_data/driving_data/20250521/test
+            # - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/business_data/driving_data/20250521/test/Site_116_25036670559007_40_04189202692854_20250411-184249-249467_Site_116_25037_40_04189_0_20250512221403/DZ907_20250322_093818
+
+        metaset_cfgs:
+            - dataset_name: "driving_test"
+              ratio: 1.0
+              interp_using_t: True
+              closest_using_t: True
+              sparse_interpolate: True
+              min_depth: 2
+              max_depth: 60
+              ims_pattern: '{frame:05d}.jpg'
+              dps_pattern: '{frame:05d}.exr'
+              is_bussi_data: True
+            #   depth_mask_th: 0.774
+
+
+            - type: MultiviewPointDataset
+              ddp_shard_dataset: False
+              n_rays: -1
+              proc_max_size: -1 # use this to resize the image
+              proc_align_size: 1 # align the image to this size
+              max_size: 518 # use this to resize the image
+              align_size: 14 # align the image to this size
+              disk_dataset: True # to avoid loading all data into memory
+              view_sample: [0, null, 1]
+              frame_sample: [0, null, 1]
+              n_srcs_list: &val_n_srcs_list [23]
+              n_srcs_prob: &val_n_srcs_probs [1.0]
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+              source_type: MULTIVIEWSEQ
+              extra_src_pool: 5  # expand the source pool to twice the number of sources
+              dist_opt_K: False # no distortion for synthetic data
+              use_depths: True # use ground truth depths for evaluation
+              use_world_coord: True
+              scale: 15.0
+              scale_type: MANUAL
+              use_3ddr: True
+              meta_file: __meta_3ddr.pkl
+              min_depth_quantile: 0.0
+              max_depth_quantile: 1.0
+
+    sampler_cfg:
+        type: DistributedSequentialSampler
+        view_sample: [0, null, 1]
+        frame_sample: [0, null, 1500]
+    batch_sampler_cfg:
+        n_srcs_list: *val_n_srcs_list  # copied from dataset_cfg
+        n_srcs_prob: *val_n_srcs_probs  # copied from dataset_cfg
+
+# prettier-ignore
+exp_name: {{fileBasenameNoExtension}}

@@ -1,0 +1,8 @@
+configs:
+    - configs/exps/vggt/vggt_official_eval_paper.yaml
+
+model_cfg:
+    vggt_cfg:
+        aggregator_cfg:
+            # Keep official VGGT weights, but run layers 0-8 with frame-local attention range.
+            global_frame_attention_layers: "0-8"

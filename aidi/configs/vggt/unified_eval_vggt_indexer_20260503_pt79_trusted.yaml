@@ -1,0 +1,168 @@
+run:
+  name: vggt_indexer_20260503_pt79_trusted
+  gpu_ids: auto
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/unified_eval_results/vggt_indexer_20260503_pt79_trusted_20260511
+  save_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline
+  skip_existing: true
+  continue_on_error: true
+  allow_co3dv2_videodepth: false
+  auto_skip_known_oom_official_videodepth_on_5090: true
+
+model:
+  kind: custom
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/trained_model/vggt/official/finetune_5090_sparse_20260503_b11klwarmupend_12ds_nomapillary_topk1024_l9_19_nosvb_core4val_8x8_v1/79.pt
+  # This experiment directory does not contain an embedded record config. This
+  # surrogate matches the inference architecture used by the 20260503 run.
+  config: aidi/configs/vggt/finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+
+datasets:
+  re10k:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/re10k/processed_pose1800_clusterfix/test
+    pose:
+      enabled: true
+      limit_scenes: 0
+
+  co3dv2:
+    image_root: /horizon-bucket/saturn_v_4dlabel/009_geo/002_data/dust3r_datasets/dust3r_extracted/co3dv2
+    setlist_root: /horizon-bucket/saturn_v_4dlabel/009_geo/002_data/dust3r_datasets/dust3r_extracted/co3dv2
+    anno_dir: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/co3d_official_annos_co3d_setlists_seen41_test
+    shared_image_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/co3d_official_image_mirror_co3d_setlists_seen41_test_full
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/co3dv2/test
+    data_root_candidates:
+      - /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/co3dv2/test
+      - /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/co3dv2/test
+    data_root_min_categories: 41
+    data_root_min_scenes: 20000
+    pose:
+      enabled: true
+      num_frames: 10
+
+  sintel:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    pose:
+      enabled: true
+      limit_seqs: 0
+      require_official_layout: true
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+
+  tum:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/tum_dynamics
+    pose:
+      enabled: true
+      limit_seqs: 0
+      require_official_layout: true
+
+  scannet:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/scannet_exact100
+    pose:
+      enabled: true
+      limit_seqs: 0
+      require_official_layout: true
+
+  scannet1500:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/relpose1500_reloc3r_20260421/scannet1500/scannet_test_1500
+    manifest_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/relpose1500_reloc3r_20260421/scannet1500/manifest_reloc3r_compat
+    pose:
+      enabled: true
+      pair_limit: 0
+
+  7scenes:
+    root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/7Scenes
+    pose:
+      enabled: true
+      max_frames: 100
+    pointcloud:
+      sparse:
+        enabled: true
+        max_sequences: 0
+      dense:
+        enabled: true
+        max_sequences: 0
+
+  eth3d:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/eth3d
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/eth3d/train
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_root
+    seq_map: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/eth3d_pi3_style_seqmap.json
+    pose:
+      enabled: true
+      max_frames: 100
+    depth:
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+
+  dtu64:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/dtu64
+    pose:
+      enabled: true
+      max_frames: 100
+
+  hiroom:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/hiroom/data
+    pose:
+      enabled: true
+      max_frames: 100
+
+  scannetpp:
+    root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/da3_benchmark_dataset_20260420/scannetpp
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    pose:
+      enabled: true
+      max_frames: 100
+
+  dtu:
+    dataset_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/eval_datasets/dtu_test_mvsnet_release_full
+    pointcloud:
+      enabled: true
+      max_sequences: 0
+
+  nrgbd:
+    dataset_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/zinan.lv/dataset_point/NRGBD
+    pointcloud:
+      sparse:
+        enabled: true
+        max_sequences: 0
+      dense:
+        enabled: true
+        max_sequences: 0
+
+  bonn:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/bonn_pi3/rgbd_bonn_dataset
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50
+
+  kitti:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/kitti_official_download/depth_selection/val_selection_cropped
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+      videodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 50

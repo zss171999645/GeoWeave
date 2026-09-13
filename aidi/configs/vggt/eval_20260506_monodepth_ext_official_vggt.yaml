@@ -1,0 +1,61 @@
+run:
+  name: monodepth_ext_official_vggt_20260506
+  gpu_ids: "4,5,6,7"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260506_monodepth_ext/official_vggt
+  skip_existing: false
+  continue_on_error: true
+
+model:
+  kind: official
+  official_ckpt_root: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/vggt/official/VGGT-1B
+
+datasets:
+  eth3d:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/eth3d/train
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+        vggt_input_preprocess: official
+  7scenes:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/tao02.xie/datasets/7scenes/test
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+        vggt_input_preprocess: official
+  blendedmvs:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/blendedmvs/test
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+        vggt_input_preprocess: official
+  mvs_synth:
+    data_root: /horizon-bucket/saturn_v_dev/users/tao02.xie/datasets/mvs_synth/GTAV_1080
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+        vggt_input_preprocess: official
+  scannetpp:
+    data_root: /horizon-bucket/saturn_v_4dlabel/004_vision/01_users/yingfeng.cai/evc_data/scannetpp
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+        vggt_input_preprocess: official
+  vkitti2:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/datasets/vkitti2_resolved
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+        vggt_input_preprocess: official

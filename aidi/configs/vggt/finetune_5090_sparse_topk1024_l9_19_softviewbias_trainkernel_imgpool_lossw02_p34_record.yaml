@@ -1,0 +1,9 @@
+_base_: ./finetune_5090_sparse_topk1024_l9_19_p34_record.yaml
+
+model_cfg:
+    vggt_cfg:
+        indexer_cfg:
+            soft_view_bias_enabled: True
+            soft_view_bias_training_kernel_enabled: True
+            soft_view_bias_descriptor: image_pool
+            sparse_loss_weight: 0.2

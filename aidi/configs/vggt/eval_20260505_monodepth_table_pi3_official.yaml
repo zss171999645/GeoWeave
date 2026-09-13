@@ -1,0 +1,35 @@
+run:
+  name: monodepth_table_pi3_official_20260505
+  gpu_ids: "3,4,5"
+  device: auto
+  output_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/result/unified_eval/20260505_monodepth_table/pi3_official
+  skip_existing: false
+  continue_on_error: true
+
+model:
+  kind: pi3
+  checkpoint: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/pretrained/pi3/yyfz233_Pi3_model.safetensors
+  pi3_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/external_refs/pi3-official2_clean
+
+datasets:
+  sintel:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/pi3_relpose_exact_benchmark/sintel
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+  bonn:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/bonn_pi3/rgbd_bonn_dataset
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0
+  kitti:
+    data_root: /horizon-bucket/saturn_v_dev/01_users/feng01.zhou/projects/meshx/baseline/datasets/kitti_official_download/depth_selection/val_selection_cropped
+    depth:
+      monodepth:
+        enabled: true
+        max_seqs: 0
+        max_frames_per_seq: 0

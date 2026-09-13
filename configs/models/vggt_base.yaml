@@ -1,0 +1,33 @@
+# DINOv2 base model with register
+
+model_cfg:
+    sampler_cfg:
+        type: VGGTSampler
+        use_checkpoint: False
+        dinov2_ckpt: /horizon-bucket/saturn_v_dev/01_users/tao02.xie/projects/GFM/gfm/data/trained_model/dinov2/backbones/dinov2_vitb14_reg4_pretrain.pth
+        agg_regator_cfg:
+            img_size: 518
+            patch_size: 14
+            embed_dim: 768
+            num_heads: 12
+            depth: 12
+            patch_embed: dinov2_vitb14_reg
+            intermediate_layer_idx: [2, 5, 8, 11]
+        cam_decoder_cfg:
+            dim_in: 1536
+        xyz_decoder_cfg:
+            dim_in: 1536
+            output_dim: 4
+            activation: inv_log
+            conf_activation: expp1
+            features: 128
+            out_channels: [96, 192, 384, 768]
+            intermediate_layer_idx: [2, 5, 8, 11]
+        dpt_decoder_cfg:
+            dim_in: 1536
+            output_dim: 2
+            activation: inv_log
+            conf_activation: expp1
+            features: 128
+            out_channels: [96, 192, 384, 768]
+            intermediate_layer_idx: [2, 5, 8, 11]

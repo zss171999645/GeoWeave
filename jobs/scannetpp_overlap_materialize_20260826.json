@@ -1,0 +1,63 @@
+{
+  "name": "geoweave-scannetpp-overlap-materialize-20260826",
+  "queue": "aihcq-em3tafa9yg0u",
+  "priority": "high",
+  "jobFramework": "pytorch",
+  "jobSpec": {
+    "command": "bash -lc 'set -euo pipefail; LOG=/mnt/cfs/train_logs/zhoufeng/scannetpp_overlap_materialize_20260826.log; mkdir -p /mnt/cfs/train_logs/zhoufeng; exec > >(tee -a \"$LOG\") 2>&1; cd /mnt/cfs/zhoufeng/siggraph26_rebuttal/worktrees/revision-required-metrics-20260824; echo job_start=$(date -Iseconds); echo git_sha=$(git rev-parse HEAD); test -z \"$(git status --porcelain)\"; /mnt/cfs/zhoufeng/env/geoweave-rebuttal/bin/python aidi/scripts/baselines/build_scannetpp_paired_overlap_sweep.py --mode materialize --manifest-path /mnt/cfs/zhoufeng/siggraph26_rebuttal/outputs/scannetpp_overlap_sweep_20260825/preflight_formal_v1/selection_manifest.json --output-root /mnt/cfs/zhoufeng/siggraph26_rebuttal/outputs/scannetpp_overlap_sweep_20260825/tuples_v1 --dataset-output-name scannetpp_overlap_sweep --overwrite; grep -q \"\\\"num_anchors\\\": 20\" /mnt/cfs/zhoufeng/siggraph26_rebuttal/outputs/scannetpp_overlap_sweep_20260825/tuples_v1/materialization_validation.json; grep -q \"\\\"num_tuples\\\": 80\" /mnt/cfs/zhoufeng/siggraph26_rebuttal/outputs/scannetpp_overlap_sweep_20260825/tuples_v1/materialization_validation.json; echo job_end=$(date -Iseconds)'",
+    "image": "ccr-registry.baidubce.com/aihc/aihc-daft-gpu:0.5.1-cu12.1-py3.11-ubuntu22.04",
+    "replicas": 1,
+    "resources": [
+      {
+        "name": "cpu",
+        "quantity": 16
+      },
+      {
+        "name": "memory",
+        "quantity": 64
+      },
+      {
+        "name": "sharedMemory",
+        "quantity": 0
+      }
+    ],
+    "envs": [
+      {
+        "name": "AIHC_JOB_NAME",
+        "value": "geoweave-scannetpp-overlap-materialize-20260826"
+      },
+      {
+        "name": "HOME",
+        "value": "/mnt/cfs/zhoufeng"
+      },
+      {
+        "name": "PYTHONUNBUFFERED",
+        "value": "1"
+      },
+      {
+        "name": "LOG_COLLECTION",
+        "value": "true"
+      }
+    ],
+    "enableRDMA": false,
+    "hostNetwork": false
+  },
+  "faultTolerance": false,
+  "datasources": [
+    {
+      "id": "",
+      "type": "cfs",
+      "sourcePath": "/",
+      "mountPath": "/mnt/cfs",
+      "name": "",
+      "options": {
+        "sizeLimit": 0,
+        "medium": "",
+        "readOnly": false,
+        "cfsInstanceId": "cfs-GBACNetP5Z",
+        "cfsMountPoint": "cfs-GBACNetP5Z.lb-2u4g3ad3.cfs.bj.baidubce.com"
+      }
+    }
+  ],
+  "retentionPeriod": "1d"
+}
